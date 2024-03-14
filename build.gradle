@@ -1,0 +1,207 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+        jcenter()
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+        maven { url = 'https://maven.parchmentmc.org' }
+    }
+    dependencies {
+        classpath "net.minecraftforge.gradle:ForgeGradle:${forgegradle_version}"
+        classpath "org.spongepowered:mixingradle:${mixingradle_version}"
+        classpath "org.parchmentmc:librarian:${librarian_version}"
+    }
+}
+
+plugins {
+    id 'com.matthewprenger.cursegradle' version "${cursegradle_version}"
+}
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
+
+jarJar.enable()
+
+boolean dev = System.getenv('RELEASE') == null || System.getenv('RELEASE').equals('false');
+// jozu: I use a gradle workspace with both projects.
+// The project is named Flywheel-Forge, but sub-projects are named by folder.
+boolean inWorkspace = findProject(':Flywheel') != null
+
+ext.buildNumber = System.getenv('BUILD_NUMBER')
+
+group = 'com.simibubi.create'
+archivesBaseName = "create-${artifact_minecraft_version}"
+version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : '')
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + ' (' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+
+minecraft {
+    if (Boolean.parseBoolean(project.use_parchment)) {
+        mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    } else {
+        mappings channel: 'official', version: "${minecraft_version}"
+    }
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            arg '-mixin.config=create.mixins.json'
+            //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
+            property 'forge.logging.console.level', 'info'
+            mods {
+                create {
+                    source sourceSets.main
+                }
+
+                if (inWorkspace) {
+                    flywheel {
+                        source project(":Flywheel").sourceSets.main
+                    }
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+            arg '-mixin.config=create.mixins.json'
+            property 'forge.logging.console.level', 'info'
+            mods {
+                create {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    maven {
+        // location of the maven for Registrate and Flywheel
+        name = 'tterrag maven'
+        url = 'https://maven.tterrag.com'
+    }
+
+    mavenLocal()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    jarJar("com.tterrag.registrate:Registrate:${registrate_version}") {
+        jarJar.ranged(it, '[MC1.19.3-1.1.10,)')
+    }
+    jarJar("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}") {
+        jarJar.ranged(it, '[0.6.10,0.6.11)')
+    }
+
+    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    if (inWorkspace) {
+        implementation project(':Flywheel')
+    } else {
+        implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    }
+
+    if (!Boolean.getBoolean('idea.sync.active')) {
+        annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    }
+}
+
+sourceSets.main.java {
+	if (!cc_tweaked_enable.toBoolean()) {
+        exclude 'com/simibubi/create/compat/computercraft/implementation/**'
+	}
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '.cache/'
+}
+
+mixin {
+    add sourceSets.main, 'create.refmap.json'
+}
+
+// Workaround for SpongePowered/MixinGradle#38
+afterEvaluate {
+    tasks.configureReobfTaskForReobfJar.mustRunAfter(tasks.compileJava)
+    tasks.configureReobfTaskForReobfJarJar.mustRunAfter(tasks.compileJava)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+compileJava {
+    options.compilerArgs = ['-Xdiags:verbose']
+}
+
+jar {
+    archiveClassifier = 'slim'
+    manifest {
+        attributes([
+            'Specification-Title': 'create',
+            'Specification-Vendor': 'simibubi',
+            'Specification-Version': '1',
+            'Implementation-Title': project.jar.archiveBaseName,
+            'Implementation-Version': project.jar.archiveVersion,
+            'Implementation-Vendor': 'simibubi',
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            'MixinConfigs': 'create.mixins.json'
+        ])
+    }
+}
+
+task jarJarRelease {
+    group = 'jarjar'
+    doLast {
+        tasks.jarJar {
+            archiveClassifier = ''
+        }
+    }
+    finalizedBy tasks.jarJar
+}
+
+java {
+    //withSourcesJar()
+    //withJavadocJar()
+}
+
+void addLicense(jarTask) {
+    jarTask.from('LICENSE') {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+}
+
+jar.finalizedBy('reobfJar')
+tasks.jarJar.finalizedBy('reobfJarJar')
+
+addLicense(jar)
+addLicense(tasks.jarJar)
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = archivesBaseName
+
+            from components.java
+            fg.component(it)
+            jarJar.component(it)
+        }
+    }
+
+    repositories {
+        if (project.hasProperty('mavendir')) {
+            maven { url mavendir }
+        }
+    }
+}
