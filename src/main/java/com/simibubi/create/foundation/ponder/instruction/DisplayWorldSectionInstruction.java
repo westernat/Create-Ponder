@@ -10,35 +10,35 @@ import java.util.function.Supplier;
 
 public class DisplayWorldSectionInstruction extends FadeIntoSceneInstruction<WorldSectionElement> {
 
-	private Selection initialSelection;
-	private final Optional<Supplier<WorldSectionElement>> mergeOnto;
+    private Selection initialSelection;
+    private final Optional<Supplier<WorldSectionElement>> mergeOnto;
 
-	public DisplayWorldSectionInstruction(int fadeInTicks, Direction fadeInFrom, Selection selection, Optional<Supplier<WorldSectionElement>> mergeOnto) {
-		super(fadeInTicks, fadeInFrom, new WorldSectionElement(selection));
-		initialSelection = selection;
-		this.mergeOnto = mergeOnto;
-	}
+    public DisplayWorldSectionInstruction(int fadeInTicks, Direction fadeInFrom, Selection selection, Optional<Supplier<WorldSectionElement>> mergeOnto) {
+        super(fadeInTicks, fadeInFrom, new WorldSectionElement(selection));
+        initialSelection = selection;
+        this.mergeOnto = mergeOnto;
+    }
 
-	@Override
-	protected void firstTick(PonderScene scene) {
-		super.firstTick(scene);
-		mergeOnto.ifPresent(wse -> element.setAnimatedOffset(wse.get()
-			.getAnimatedOffset(), true));
-		element.set(initialSelection);
-		element.setVisible(true);
-	}
+    @Override
+    protected void firstTick(PonderScene scene) {
+        super.firstTick(scene);
+        mergeOnto.ifPresent(wse -> element.setAnimatedOffset(wse.get()
+            .getAnimatedOffset(), true));
+        element.set(initialSelection);
+        element.setVisible(true);
+    }
 
-	@Override
-	public void tick(PonderScene scene) {
-		super.tick(scene);
-		if (remainingTicks > 0)
-			return;
-		mergeOnto.ifPresent(c -> element.mergeOnto(c.get()));
-	}
+    @Override
+    public void tick(PonderScene scene) {
+        super.tick(scene);
+        if (remainingTicks > 0)
+            return;
+        mergeOnto.ifPresent(c -> element.mergeOnto(c.get()));
+    }
 
-	@Override
-	protected Class<WorldSectionElement> getElementClass() {
-		return WorldSectionElement.class;
-	}
+    @Override
+    protected Class<WorldSectionElement> getElementClass() {
+        return WorldSectionElement.class;
+    }
 
 }

@@ -12,15 +12,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LocalPlayer.class)
 public abstract class HeavyBootsOnPlayerMixin extends AbstractClientPlayer {
+    private HeavyBootsOnPlayerMixin(ClientLevel level, GameProfile profile) {
+        super(level, profile);
+    }
 
-	private HeavyBootsOnPlayerMixin(ClientLevel level, GameProfile profile) {
-		super(level, profile);
-	}
-
-	@Inject(method = "isUnderWater()Z", at = @At("HEAD"), cancellable = true)
-	public void create$noSwimmingWithHeavyBootsOn(CallbackInfoReturnable<Boolean> cir) {
-		CompoundTag persistentData = getPersistentData();
-		if (persistentData.contains("HeavyBoots"))
-			cir.setReturnValue(false);
-	}
+    @Inject(method = "isUnderWater()Z", at = @At("HEAD"), cancellable = true)
+    public void create$noSwimmingWithHeavyBootsOn(CallbackInfoReturnable<Boolean> cir) {
+        CompoundTag persistentData = getPersistentData();
+        if (persistentData.contains("HeavyBoots"))
+            cir.setReturnValue(false);
+    }
 }

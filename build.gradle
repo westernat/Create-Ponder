@@ -32,7 +32,7 @@ boolean inWorkspace = findProject(':Flywheel') != null
 ext.buildNumber = System.getenv('BUILD_NUMBER')
 
 group = 'com.simibubi.create'
-archivesBaseName = "create-${artifact_minecraft_version}"
+archivesBaseName = "create-ponder-${artifact_minecraft_version}"
 version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : '')
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)

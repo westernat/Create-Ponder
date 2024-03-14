@@ -10,45 +10,45 @@ import java.util.stream.Collectors;
 
 public class PonderChapterRegistry {
 
-	private final Map<ResourceLocation, Pair<PonderChapter, List<PonderStoryBoardEntry>>> chapters;
+    private final Map<ResourceLocation, Pair<PonderChapter, List<PonderStoryBoardEntry>>> chapters;
 
-	public PonderChapterRegistry() {
-		chapters = new HashMap<>();
-	}
+    public PonderChapterRegistry() {
+        chapters = new HashMap<>();
+    }
 
-	PonderChapter addChapter(@Nonnull PonderChapter chapter) {
-		synchronized (chapters) {
-			chapters.put(chapter.getId(), Pair.of(chapter, new ArrayList<>()));
-		}
-		return chapter;
-	}
+    PonderChapter addChapter(@Nonnull PonderChapter chapter) {
+        synchronized (chapters) {
+            chapters.put(chapter.getId(), Pair.of(chapter, new ArrayList<>()));
+        }
+        return chapter;
+    }
 
-	@Nullable
-	PonderChapter getChapter(ResourceLocation id) {
-		Pair<PonderChapter, List<PonderStoryBoardEntry>> pair = chapters.get(id);
-		if (pair == null)
-			return null;
+    @Nullable
+    PonderChapter getChapter(ResourceLocation id) {
+        Pair<PonderChapter, List<PonderStoryBoardEntry>> pair = chapters.get(id);
+        if (pair == null)
+            return null;
 
-		return pair.getFirst();
-	}
+        return pair.getFirst();
+    }
 
-	public void addStoriesToChapter(@Nonnull PonderChapter chapter, PonderStoryBoardEntry... entries) {
-		List<PonderStoryBoardEntry> entryList = chapters.get(chapter.getId()).getSecond();
-		synchronized (entryList) {
-			Collections.addAll(entryList, entries);
-		}
-	}
+    public void addStoriesToChapter(@Nonnull PonderChapter chapter, PonderStoryBoardEntry... entries) {
+        List<PonderStoryBoardEntry> entryList = chapters.get(chapter.getId()).getSecond();
+        synchronized (entryList) {
+            Collections.addAll(entryList, entries);
+        }
+    }
 
-	public List<PonderChapter> getAllChapters() {
-		return chapters
-				.values()
-				.stream()
-				.map(Pair::getFirst)
-				.collect(Collectors.toList());
-	}
+    public List<PonderChapter> getAllChapters() {
+        return chapters
+            .values()
+            .stream()
+            .map(Pair::getFirst)
+            .collect(Collectors.toList());
+    }
 
-	public List<PonderStoryBoardEntry> getStories(PonderChapter chapter) {
-		return chapters.get(chapter.getId()).getSecond();
-	}
+    public List<PonderStoryBoardEntry> getStories(PonderChapter chapter) {
+        return chapters.get(chapter.getId()).getSecond();
+    }
 
 }

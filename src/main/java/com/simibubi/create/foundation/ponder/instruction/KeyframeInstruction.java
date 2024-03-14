@@ -6,11 +6,11 @@ public class KeyframeInstruction extends PonderInstruction {
 
     public static final KeyframeInstruction IMMEDIATE = new KeyframeInstruction(false);
     public static final KeyframeInstruction DELAYED = new KeyframeInstruction(true);
-    
-	private boolean delayed;
+
+    private boolean delayed;
 
     private KeyframeInstruction(boolean delayed) {
-		this.delayed = delayed; 
+        this.delayed = delayed;
     }
 
     @Override
@@ -19,7 +19,8 @@ public class KeyframeInstruction extends PonderInstruction {
     }
 
     @Override
-    public void tick(PonderScene scene) { }
+    public void tick(PonderScene scene) {
+    }
 
     @Override
     public void onScheduled(PonderScene scene) {

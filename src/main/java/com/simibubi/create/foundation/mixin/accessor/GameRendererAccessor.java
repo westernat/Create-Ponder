@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(GameRenderer.class)
 public interface GameRendererAccessor {
-	@Invoker("getFov")
-	double create$callGetFov(Camera camera, float partialTicks, boolean useFOVSetting);
+    @Invoker("getFov")
+    double create$callGetFov(Camera camera, float partialTicks, boolean useFOVSetting);
 }

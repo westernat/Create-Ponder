@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(Entity.class)
 public interface EntityAccessor {
-	@Invoker("setLevel")
-	void create$callSetLevel(Level level);
+    @Invoker("setLevel")
+    void create$callSetLevel(Level level);
 }

@@ -6,26 +6,26 @@ import com.simibubi.create.foundation.ponder.element.WorldSectionElement;
 
 public abstract class WorldModifyInstruction extends PonderInstruction {
 
-	private Selection selection;
+    private Selection selection;
 
-	public WorldModifyInstruction(Selection selection) {
-		this.selection = selection;
-	}
+    public WorldModifyInstruction(Selection selection) {
+        this.selection = selection;
+    }
 
-	@Override
-	public boolean isComplete() {
-		return true;
-	}
+    @Override
+    public boolean isComplete() {
+        return true;
+    }
 
-	@Override
-	public void tick(PonderScene scene) {
-		runModification(selection, scene);
-		if (needsRedraw()) 
-			scene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
-	}
+    @Override
+    public void tick(PonderScene scene) {
+        runModification(selection, scene);
+        if (needsRedraw())
+            scene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+    }
 
-	protected abstract void runModification(Selection selection, PonderScene scene);
+    protected abstract void runModification(Selection selection, PonderScene scene);
 
-	protected abstract boolean needsRedraw();
+    protected abstract boolean needsRedraw();
 
 }

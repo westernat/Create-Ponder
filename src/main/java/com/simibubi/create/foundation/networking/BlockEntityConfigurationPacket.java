@@ -9,64 +9,63 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent.Context;
 
 public abstract class BlockEntityConfigurationPacket<BE extends SyncedBlockEntity> extends SimplePacketBase {
+    protected BlockPos pos;
 
-	protected BlockPos pos;
+    public BlockEntityConfigurationPacket(FriendlyByteBuf buffer) {
+        pos = buffer.readBlockPos();
+        readSettings(buffer);
+    }
 
-	public BlockEntityConfigurationPacket(FriendlyByteBuf buffer) {
-		pos = buffer.readBlockPos();
-		readSettings(buffer);
-	}
+    public BlockEntityConfigurationPacket(BlockPos pos) {
+        this.pos = pos;
+    }
 
-	public BlockEntityConfigurationPacket(BlockPos pos) {
-		this.pos = pos;
-	}
+    @Override
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeBlockPos(pos);
+        writeSettings(buffer);
+    }
 
-	@Override
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeBlockPos(pos);
-		writeSettings(buffer);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean handle(Context context) {
+        context.enqueueWork(() -> {
+            ServerPlayer player = context.getSender();
+            if (player == null)
+                return;
+            Level world = player.level();
+            if (world == null || !world.isLoaded(pos))
+                return;
+            if (!pos.closerThan(player.blockPosition(), maxRange()))
+                return;
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof SyncedBlockEntity) {
+                applySettings(player, (BE) blockEntity);
+                if (!causeUpdate())
+                    return;
+                ((SyncedBlockEntity) blockEntity).sendData();
+                blockEntity.setChanged();
+            }
+        });
+        return true;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean handle(Context context) {
-		context.enqueueWork(() -> {
-			ServerPlayer player = context.getSender();
-			if (player == null)
-				return;
-			Level world = player.level();
-			if (world == null || !world.isLoaded(pos))
-				return;
-			if (!pos.closerThan(player.blockPosition(), maxRange()))
-				return;
-			BlockEntity blockEntity = world.getBlockEntity(pos);
-			if (blockEntity instanceof SyncedBlockEntity) {
-				applySettings(player, (BE) blockEntity);
-				if (!causeUpdate())
-					return;
-				((SyncedBlockEntity) blockEntity).sendData();
-				blockEntity.setChanged();
-			}
-		});
-		return true;
-	}
+    protected int maxRange() {
+        return 20;
+    }
 
-	protected int maxRange() {
-		return 20;
-	}
+    protected abstract void writeSettings(FriendlyByteBuf buffer);
 
-	protected abstract void writeSettings(FriendlyByteBuf buffer);
+    protected abstract void readSettings(FriendlyByteBuf buffer);
 
-	protected abstract void readSettings(FriendlyByteBuf buffer);
+    protected void applySettings(ServerPlayer player, BE be) {
+        applySettings(be);
+    }
 
-	protected void applySettings(ServerPlayer player, BE be) {
-		applySettings(be);
-	}
-	
-	protected boolean causeUpdate() {
-		return true;
-	}
+    protected boolean causeUpdate() {
+        return true;
+    }
 
-	protected abstract void applySettings(BE be);
+    protected abstract void applySettings(BE be);
 
 }

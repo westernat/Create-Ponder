@@ -11,5 +11,4 @@ public class AllPonderTags {
     public static void register() {
         // Add items to tags here
     }
-
 }

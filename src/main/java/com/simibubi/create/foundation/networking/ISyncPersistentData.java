@@ -11,49 +11,48 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.HashSet;
 
 public interface ISyncPersistentData {
+    void onPersistentDataUpdated();
 
-	void onPersistentDataUpdated();
+    default void syncPersistentDataWithTracking(Entity self) {
+        AllPackets.getChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> self), new PersistentDataPacket(self));
+    }
 
-	default void syncPersistentDataWithTracking(Entity self) {
-		AllPackets.getChannel().send(PacketDistributor.TRACKING_ENTITY.with(() -> self), new PersistentDataPacket(self));
-	}
+    class PersistentDataPacket extends SimplePacketBase {
 
-	public static class PersistentDataPacket extends SimplePacketBase {
+        private int entityId;
+        private Entity entity;
+        private CompoundTag readData;
 
-		private int entityId;
-		private Entity entity;
-		private CompoundTag readData;
+        public PersistentDataPacket(Entity entity) {
+            this.entity = entity;
+            this.entityId = entity.getId();
+        }
 
-		public PersistentDataPacket(Entity entity) {
-			this.entity = entity;
-			this.entityId = entity.getId();
-		}
+        public PersistentDataPacket(FriendlyByteBuf buffer) {
+            entityId = buffer.readInt();
+            readData = buffer.readNbt();
+        }
 
-		public PersistentDataPacket(FriendlyByteBuf buffer) {
-			entityId = buffer.readInt();
-			readData = buffer.readNbt();
-		}
+        @Override
+        public void write(FriendlyByteBuf buffer) {
+            buffer.writeInt(entityId);
+            buffer.writeNbt(entity.getPersistentData());
+        }
 
-		@Override
-		public void write(FriendlyByteBuf buffer) {
-			buffer.writeInt(entityId);
-			buffer.writeNbt(entity.getPersistentData());
-		}
+        @Override
+        public boolean handle(Context context) {
+            context.enqueueWork(() -> {
+                Entity entityByID = Minecraft.getInstance().level.getEntity(entityId);
+                CompoundTag data = entityByID.getPersistentData();
+                new HashSet<>(data.getAllKeys()).forEach(data::remove);
+                data.merge(readData);
+                if (!(entityByID instanceof ISyncPersistentData))
+                    return;
+                ((ISyncPersistentData) entityByID).onPersistentDataUpdated();
+            });
+            return true;
+        }
 
-		@Override
-		public boolean handle(Context context) {
-			context.enqueueWork(() -> {
-				Entity entityByID = Minecraft.getInstance().level.getEntity(entityId);
-				CompoundTag data = entityByID.getPersistentData();
-				new HashSet<>(data.getAllKeys()).forEach(data::remove);
-				data.merge(readData);
-				if (!(entityByID instanceof ISyncPersistentData))
-					return;
-				((ISyncPersistentData) entityByID).onPersistentDataUpdated();
-			});
-			return true;
-		}
-
-	}
+    }
 
 }

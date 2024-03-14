@@ -20,45 +20,47 @@ import java.util.Random;
 
 @Mod(Create.ID)
 public class Create {
-	public static final String ID = "createponder";
-	public static final String NAME = "Create Ponder";
-	public static final String VERSION = "0.0.1a";
+    public static final String ID = "createponder";
+    public static final String NAME = "Create Ponder";
+    public static final String VERSION = "0.0.1a";
 
-	public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
-	/** Use the {@link Random} of a local {@link Level} or {@link Entity} or create one */
-	@Deprecated
-	public static final Random RANDOM = new Random();
+    /**
+     * Use the {@link Random} of a local {@link Level} or {@link Entity} or create one
+     */
+    @Deprecated
+    public static final Random RANDOM = new Random();
 
-	public Create() {
-		onCtor();
-	}
+    public Create() {
+        onCtor();
+    }
 
-	public static void onCtor() {
-		ModLoadingContext modLoadingContext = ModLoadingContext.get();
+    public static void onCtor() {
+        ModLoadingContext modLoadingContext = ModLoadingContext.get();
 
-		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-		AllStructureProcessorTypes.register(modEventBus);
-		AllPackets.registerPackets();
+        AllStructureProcessorTypes.register(modEventBus);
+        AllPackets.registerPackets();
 
-		AllConfigs.register(modLoadingContext);
+        AllConfigs.register(modLoadingContext);
 
-		ForgeMod.enableMilkFluid();
+        ForgeMod.enableMilkFluid();
 
-		modEventBus.addListener(Create::init);
+        modEventBus.addListener(Create::init);
 
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateClient.onCtorClient(modEventBus));
-	}
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateClient.onCtorClient(modEventBus));
+    }
 
-	public static void init(final FMLCommonSetupEvent event) {
-		event.enqueueWork(() -> {
-			AttachedRegistry.unwrapAll();
-		});
-	}
+    public static void init(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            AttachedRegistry.unwrapAll();
+        });
+    }
 
-	public static ResourceLocation asResource(String path) {
-		return new ResourceLocation(ID, path);
-	}
+    public static ResourceLocation asResource(String path) {
+        return new ResourceLocation(ID, path);
+    }
 
 }

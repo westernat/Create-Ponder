@@ -1,45 +1,47 @@
 package com.simibubi.create.foundation.ponder.instruction;
 
-import java.util.function.Consumer;
-
 import com.simibubi.create.foundation.ponder.PonderScene;
+
+import java.util.function.Consumer;
 
 public abstract class PonderInstruction {
 
-	public boolean isBlocking() {
-		return false;
-	}
+    public boolean isBlocking() {
+        return false;
+    }
 
-	public void reset(PonderScene scene) {}
+    public void reset(PonderScene scene) {
+    }
 
-	public abstract boolean isComplete();
+    public abstract boolean isComplete();
 
-	public void onScheduled(PonderScene scene) {}
+    public void onScheduled(PonderScene scene) {
+    }
 
-	public abstract void tick(PonderScene scene);
+    public abstract void tick(PonderScene scene);
 
-	public static PonderInstruction simple(Consumer<PonderScene> callback) {
-		return new Simple(callback);
-	}
+    public static PonderInstruction simple(Consumer<PonderScene> callback) {
+        return new Simple(callback);
+    }
 
-	private static class Simple extends PonderInstruction {
+    private static class Simple extends PonderInstruction {
 
-		private Consumer<PonderScene> callback;
+        private Consumer<PonderScene> callback;
 
-		public Simple(Consumer<PonderScene> callback) {
-			this.callback = callback;
-		}
+        public Simple(Consumer<PonderScene> callback) {
+            this.callback = callback;
+        }
 
-		@Override
-		public boolean isComplete() {
-			return true;
-		}
+        @Override
+        public boolean isComplete() {
+            return true;
+        }
 
-		@Override
-		public void tick(PonderScene scene) {
-			callback.accept(scene);
-		}
+        @Override
+        public void tick(PonderScene scene) {
+            callback.accept(scene);
+        }
 
-	}
+    }
 
 }

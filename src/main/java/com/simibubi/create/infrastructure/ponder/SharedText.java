@@ -4,18 +4,18 @@ import com.simibubi.create.Create;
 import com.simibubi.create.foundation.ponder.PonderLocalization;
 
 public class SharedText {
-	public static void gatherText() {
-		// Add entries used across several ponder scenes (Safe for hotswap)
+    public static void gatherText() {
+        // Add entries used across several ponder scenes (Safe for hotswap)
 
-		add("sneak_and", "Sneak +");
-		add("ctrl_and", "Ctrl +");
+        add("sneak_and", "Sneak +");
+        add("ctrl_and", "Ctrl +");
 
-		add("movement_anchors", "With the help of Super Glue, larger structures can be moved");
-		add("behaviour_modify_value_panel", "This behaviour can be modified using the value panel");
-		add("storage_on_contraption", "Inventories attached to the Contraption will pick up their drops automatically");
-	}
+        add("movement_anchors", "With the help of Super Glue, larger structures can be moved");
+        add("behaviour_modify_value_panel", "This behaviour can be modified using the value panel");
+        add("storage_on_contraption", "Inventories attached to the Contraption will pick up their drops automatically");
+    }
 
-	private static void add(String k, String v) {
-		PonderLocalization.registerShared(Create.asResource(k), v);
-	}
+    private static void add(String k, String v) {
+        PonderLocalization.registerShared(Create.asResource(k), v);
+    }
 }

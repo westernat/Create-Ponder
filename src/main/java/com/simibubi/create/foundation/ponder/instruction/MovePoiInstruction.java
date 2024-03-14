@@ -5,20 +5,20 @@ import net.minecraft.world.phys.Vec3;
 
 public class MovePoiInstruction extends PonderInstruction {
 
-	private Vec3 poi;
+    private Vec3 poi;
 
-	public MovePoiInstruction(Vec3 poi) {
-		this.poi = poi;
-	}
-	
-	@Override
-	public boolean isComplete() {
-		return true;
-	}
+    public MovePoiInstruction(Vec3 poi) {
+        this.poi = poi;
+    }
 
-	@Override
-	public void tick(PonderScene scene) {
-		scene.setPointOfInterest(poi);
-	}
+    @Override
+    public boolean isComplete() {
+        return true;
+    }
+
+    @Override
+    public void tick(PonderScene scene) {
+        scene.setPointOfInterest(poi);
+    }
 
 }

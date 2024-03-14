@@ -26,104 +26,106 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientEvents {
+    @SubscribeEvent
+    public static void onTick(ClientTickEvent event) {
+        if (!isGameActive()) {
+            return;
+        }
 
-	@SubscribeEvent
-	public static void onTick(ClientTickEvent event) {
-		if (!isGameActive())
-			return;
+        if (event.phase == Phase.START) {
+            return;
+        }
 
-		if (event.phase == Phase.START) {
-			return;
-		}
+        AnimationTickHolder.tick();
 
-		AnimationTickHolder.tick();
+        PonderTooltipHandler.tick();
+        CreateClient.OUTLINER.tickOutlines();
+        CameraAngleAnimationService.tick();
+    }
 
-		PonderTooltipHandler.tick();
-		CreateClient.OUTLINER.tickOutlines();
-		CameraAngleAnimationService.tick();
-	}
+    @SubscribeEvent
+    public static void onJoin(ClientPlayerNetworkEvent.LoggingIn event) {
+        CreateClient.checkGraphicsFanciness();
+    }
 
-	@SubscribeEvent
-	public static void onJoin(ClientPlayerNetworkEvent.LoggingIn event) {
-		CreateClient.checkGraphicsFanciness();
-	}
+    @SubscribeEvent
+    public static void onLoadWorld(LevelEvent.Load event) {
+        LevelAccessor world = event.getLevel();
+        if (world.isClientSide() && world instanceof ClientLevel && !(world instanceof WrappedClientWorld)) {
+            CreateClient.invalidateRenderers();
+            AnimationTickHolder.reset();
+        }
+    }
 
-	@SubscribeEvent
-	public static void onLoadWorld(LevelEvent.Load event) {
-		LevelAccessor world = event.getLevel();
-		if (world.isClientSide() && world instanceof ClientLevel && !(world instanceof WrappedClientWorld)) {
-			CreateClient.invalidateRenderers();
-			AnimationTickHolder.reset();
-		}
-	}
+    @SubscribeEvent
+    public static void onUnloadWorld(LevelEvent.Unload event) {
+        if (!event.getLevel().isClientSide()) {
+            return;
+        }
+        CreateClient.invalidateRenderers();
+        AnimationTickHolder.reset();
+    }
 
-	@SubscribeEvent
-	public static void onUnloadWorld(LevelEvent.Unload event) {
-		if (!event.getLevel()
-			.isClientSide())
-			return;
-		CreateClient.invalidateRenderers();
-		AnimationTickHolder.reset();
-	}
+    @SubscribeEvent
+    public static void onRenderWorld(RenderLevelStageEvent event) {
+        if (event.getStage() != Stage.AFTER_PARTICLES) {
+            return;
+        }
 
-	@SubscribeEvent
-	public static void onRenderWorld(RenderLevelStageEvent event) {
-		if (event.getStage() != Stage.AFTER_PARTICLES)
-			return;
-		
-		PoseStack ms = event.getPoseStack();
-		ms.pushPose();
-		SuperRenderTypeBuffer buffer = SuperRenderTypeBuffer.getInstance();
-		float partialTicks = AnimationTickHolder.getPartialTicks();
-		Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera()
-			.getPosition();
+        PoseStack ms = event.getPoseStack();
+        ms.pushPose();
+        SuperRenderTypeBuffer buffer = SuperRenderTypeBuffer.getInstance();
+        float partialTicks = AnimationTickHolder.getPartialTicks();
+        Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 
-		CreateClient.OUTLINER.renderOutlines(ms, buffer, camera, partialTicks);
+        CreateClient.OUTLINER.renderOutlines(ms, buffer, camera, partialTicks);
 
-		buffer.draw();
-		RenderSystem.enableCull();
-		ms.popPose();
-	}
+        buffer.draw();
+        RenderSystem.enableCull();
+        ms.popPose();
+    }
 
-	@SubscribeEvent
-	public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
-		float partialTicks = AnimationTickHolder.getPartialTicks();
+    @SubscribeEvent
+    public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
+        float partialTicks = AnimationTickHolder.getPartialTicks();
 
-		if (CameraAngleAnimationService.isYawAnimating())
-			event.setYaw(CameraAngleAnimationService.getYaw(partialTicks));
+        if (CameraAngleAnimationService.isYawAnimating()) {
+            event.setYaw(CameraAngleAnimationService.getYaw(partialTicks));
+        }
 
-		if (CameraAngleAnimationService.isPitchAnimating())
-			event.setPitch(CameraAngleAnimationService.getPitch(partialTicks));
-	}
+        if (CameraAngleAnimationService.isPitchAnimating()) {
+            event.setPitch(CameraAngleAnimationService.getPitch(partialTicks));
+        }
+    }
 
-	@SubscribeEvent
-	public static void getItemTooltipColor(RenderTooltipEvent.Color event) {
-		PonderTooltipHandler.handleTooltipColor(event);
-	}
+    @SubscribeEvent
+    public static void getItemTooltipColor(RenderTooltipEvent.Color event) {
+        PonderTooltipHandler.handleTooltipColor(event);
+    }
 
-	@SubscribeEvent
-	public static void addToItemTooltip(ItemTooltipEvent event) {
-		if (event.getEntity() == null)
-			return;
+    @SubscribeEvent
+    public static void addToItemTooltip(ItemTooltipEvent event) {
+        if (event.getEntity() == null)
+            return;
 
-		Item item = event.getItemStack().getItem();
-		TooltipModifier modifier = TooltipModifier.REGISTRY.get(item);
-		if (modifier != null && modifier != TooltipModifier.EMPTY) {
-			modifier.modify(event);
-		}
+        Item item = event.getItemStack().getItem();
+        TooltipModifier modifier = TooltipModifier.REGISTRY.get(item);
+        if (modifier != null && modifier != TooltipModifier.EMPTY) {
+            modifier.modify(event);
+        }
 
-		PonderTooltipHandler.addToTooltip(event);
-	}
+        PonderTooltipHandler.addToTooltip(event);
+    }
 
-	protected static boolean isGameActive() {
-		return !(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null);
-	}
+    protected static boolean isGameActive() {
+        return !(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null);
+    }
 
-	@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
-	public static class ModBusEvents {
-		@SubscribeEvent
-		public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
-			event.registerReloadListener(CreateClient.RESOURCE_RELOAD_LISTENER);
-		}
-	}
+    @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+    public static class ModBusEvents {
+        @SubscribeEvent
+        public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
+            event.registerReloadListener(CreateClient.RESOURCE_RELOAD_LISTENER);
+        }
+    }
 }

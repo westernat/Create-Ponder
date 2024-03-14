@@ -1,15 +1,12 @@
 package com.simibubi.create.foundation.gui.element;
 
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import org.lwjgl.opengl.GL11;
 
 public abstract class StencilElement extends RenderElement {
-
 	@Override
 	public void render(GuiGraphics graphics) {
 		PoseStack ms = graphics.pose();

@@ -24,31 +24,25 @@ import javax.annotation.Nullable;
 import java.util.Iterator;
 
 public class BlockEntityRenderHelper {
-
-    public static void renderBlockEntities(Level world, Iterable<BlockEntity> customRenderBEs, PoseStack ms,
-                                           MultiBufferSource buffer) {
+    public static void renderBlockEntities(Level world, Iterable<BlockEntity> customRenderBEs, PoseStack ms, MultiBufferSource buffer) {
         renderBlockEntities(world, null, customRenderBEs, ms, null, buffer);
     }
 
-    public static void renderBlockEntities(Level world, Iterable<BlockEntity> customRenderBEs, PoseStack ms,
-                                           MultiBufferSource buffer, float pt) {
+    public static void renderBlockEntities(Level world, Iterable<BlockEntity> customRenderBEs, PoseStack ms, MultiBufferSource buffer, float pt) {
         renderBlockEntities(world, null, customRenderBEs, ms, null, buffer, pt);
     }
 
-    public static void renderBlockEntities(Level world, @Nullable VirtualRenderWorld renderWorld,
-                                           Iterable<BlockEntity> customRenderBEs, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer) {
-        renderBlockEntities(world, renderWorld, customRenderBEs, ms, lightTransform, buffer,
-            AnimationTickHolder.getPartialTicks());
+    public static void renderBlockEntities(Level world, @Nullable VirtualRenderWorld renderWorld, Iterable<BlockEntity> customRenderBEs, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer) {
+        renderBlockEntities(world, renderWorld, customRenderBEs, ms, lightTransform, buffer, AnimationTickHolder.getPartialTicks());
     }
 
-    public static void renderBlockEntities(Level world, @Nullable VirtualRenderWorld renderWorld,
-                                           Iterable<BlockEntity> customRenderBEs, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer,
-                                           float pt) {
+    public static void renderBlockEntities(Level world, @Nullable VirtualRenderWorld renderWorld, Iterable<BlockEntity> customRenderBEs, PoseStack ms, @Nullable Matrix4f lightTransform, MultiBufferSource buffer, float pt) {
         Iterator<BlockEntity> iterator = customRenderBEs.iterator();
         while (iterator.hasNext()) {
             BlockEntity blockEntity = iterator.next();
-            if (Backend.getBackendType() == BackendType.INSTANCING && Backend.isFlywheelWorld(renderWorld) && InstancedRenderRegistry.shouldSkipRender(blockEntity))
+            if (Backend.getBackendType() == BackendType.INSTANCING && Backend.isFlywheelWorld(renderWorld) && InstancedRenderRegistry.shouldSkipRender(blockEntity)) {
                 continue;
+            }
 
             BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
             if (renderer == null) {
@@ -58,8 +52,7 @@ public class BlockEntityRenderHelper {
 
             BlockPos pos = blockEntity.getBlockPos();
             ms.pushPose();
-            TransformStack.cast(ms)
-                .translate(pos);
+            TransformStack.cast(ms).translate(pos);
 
             try {
                 int worldLight = getCombinedLight(world, getLightPos(lightTransform, pos), renderWorld, pos);
@@ -94,8 +87,7 @@ public class BlockEntityRenderHelper {
         }
     }
 
-    public static int getCombinedLight(Level world, BlockPos worldPos, @Nullable VirtualRenderWorld renderWorld,
-                                       BlockPos renderWorldPos) {
+    public static int getCombinedLight(Level world, BlockPos worldPos, @Nullable VirtualRenderWorld renderWorld, BlockPos renderWorldPos) {
         int worldLight = LevelRenderer.getLightColor(world, worldPos);
 
         if (renderWorld != null) {
@@ -105,5 +97,4 @@ public class BlockEntityRenderHelper {
 
         return worldLight;
     }
-
 }

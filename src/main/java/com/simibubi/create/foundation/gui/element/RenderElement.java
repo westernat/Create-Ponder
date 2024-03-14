@@ -3,7 +3,6 @@ package com.simibubi.create.foundation.gui.element;
 import net.minecraft.client.gui.GuiGraphics;
 
 public abstract class RenderElement implements ScreenElement {
-
 	public static final RenderElement EMPTY = new RenderElement() {
 		@Override
 		public void render(GuiGraphics graphics) {
@@ -74,7 +73,6 @@ public abstract class RenderElement implements ScreenElement {
 	}
 
 	public static class SimpleRenderElement extends RenderElement {
-
 		private ScreenElement renderable;
 
 		public SimpleRenderElement(ScreenElement renderable) {

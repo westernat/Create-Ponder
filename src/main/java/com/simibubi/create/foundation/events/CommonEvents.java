@@ -18,30 +18,30 @@ import net.minecraftforge.forgespi.locating.IModFile;
 
 @EventBusSubscriber
 public class CommonEvents {
-	@SubscribeEvent
-	public static void onUnloadWorld(LevelEvent.Unload event) {
-		LevelAccessor world = event.getLevel();
-		WorldAttached.invalidateWorld(world);
-	}
+    @SubscribeEvent
+    public static void onUnloadWorld(LevelEvent.Unload event) {
+        LevelAccessor world = event.getLevel();
+        WorldAttached.invalidateWorld(world);
+    }
 
-	@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-	public static class ModBusEvents {
-		@SubscribeEvent
-		public static void addPackFinders(AddPackFindersEvent event) {
-			if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-				IModFileInfo modFileInfo = ModList.get().getModFileById(Create.ID);
-				if (modFileInfo == null) {
-					Create.LOGGER.error("Could not find Create mod file info; built-in resource packs will be missing!");
-					return;
-				}
-				IModFile modFile = modFileInfo.getFile();
-				event.addRepositorySource(consumer -> {
-					Pack pack = Pack.readMetaAndCreate(Create.asResource("legacy_copper").toString(), Components.literal("Create Legacy Copper"), false, id -> new ModFilePackResources(id, modFile, "resourcepacks/legacy_copper"), PackType.CLIENT_RESOURCES, Pack.Position.TOP, PackSource.BUILT_IN);
-					if (pack != null) {
-						consumer.accept(pack);
-					}
-				});
-			}
-		}
-	}
+    @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+    public static class ModBusEvents {
+        @SubscribeEvent
+        public static void addPackFinders(AddPackFindersEvent event) {
+            if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+                IModFileInfo modFileInfo = ModList.get().getModFileById(Create.ID);
+                if (modFileInfo == null) {
+                    Create.LOGGER.error("Could not find Create mod file info; built-in resource packs will be missing!");
+                    return;
+                }
+                IModFile modFile = modFileInfo.getFile();
+                event.addRepositorySource(consumer -> {
+                    Pack pack = Pack.readMetaAndCreate(Create.asResource("legacy_copper").toString(), Components.literal("Create Legacy Copper"), false, id -> new ModFilePackResources(id, modFile, "resourcepacks/legacy_copper"), PackType.CLIENT_RESOURCES, Pack.Position.TOP, PackSource.BUILT_IN);
+                    if (pack != null) {
+                        consumer.accept(pack);
+                    }
+                });
+            }
+        }
+    }
 }

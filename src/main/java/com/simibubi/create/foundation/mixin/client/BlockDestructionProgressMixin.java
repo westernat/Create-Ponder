@@ -10,16 +10,16 @@ import java.util.Set;
 
 @Mixin(BlockDestructionProgress.class)
 public class BlockDestructionProgressMixin implements BlockDestructionProgressExtension {
-	@Unique
-	private Set<BlockPos> create$extraPositions;
+    @Unique
+    private Set<BlockPos> create$extraPositions;
 
-	@Override
-	public Set<BlockPos> getExtraPositions() {
-		return create$extraPositions;
-	}
+    @Override
+    public Set<BlockPos> getExtraPositions() {
+        return create$extraPositions;
+    }
 
-	@Override
-	public void setExtraPositions(Set<BlockPos> positions) {
-		create$extraPositions = positions;
-	}
+    @Override
+    public void setExtraPositions(Set<BlockPos> positions) {
+        create$extraPositions = positions;
+    }
 }

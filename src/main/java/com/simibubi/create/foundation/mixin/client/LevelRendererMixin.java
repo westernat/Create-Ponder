@@ -24,43 +24,43 @@ import java.util.SortedSet;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
-	@Shadow
-	private ClientLevel level;
+    @Shadow
+    private ClientLevel level;
 
-	@Shadow
-	@Final
-	private Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress;
+    @Shadow
+    @Final
+    private Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress;
 
-	@Inject(method = "destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/BlockDestructionProgress;updateTick(I)V", shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void create$onDestroyBlockProgress(int breakerId, BlockPos pos, int progress, CallbackInfo ci, BlockDestructionProgress progressObj) {
-		BlockState state = level.getBlockState(pos);
-		IClientBlockExtensions properties = IClientBlockExtensions.of(state);
-		if (properties instanceof MultiPosDestructionHandler handler) {
-			Set<BlockPos> extraPositions = handler.getExtraPositions(level, pos, state, progress);
-			if (extraPositions != null) {
-				extraPositions.remove(pos);
-				((BlockDestructionProgressExtension) progressObj).setExtraPositions(extraPositions);
-				for (BlockPos extraPos : extraPositions) {
-					destructionProgress.computeIfAbsent(extraPos.asLong(), l -> Sets.newTreeSet()).add(progressObj);
-				}
-			}
-		}
-	}
+    @Inject(method = "destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/BlockDestructionProgress;updateTick(I)V", shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void create$onDestroyBlockProgress(int breakerId, BlockPos pos, int progress, CallbackInfo ci, BlockDestructionProgress progressObj) {
+        BlockState state = level.getBlockState(pos);
+        IClientBlockExtensions properties = IClientBlockExtensions.of(state);
+        if (properties instanceof MultiPosDestructionHandler handler) {
+            Set<BlockPos> extraPositions = handler.getExtraPositions(level, pos, state, progress);
+            if (extraPositions != null) {
+                extraPositions.remove(pos);
+                ((BlockDestructionProgressExtension) progressObj).setExtraPositions(extraPositions);
+                for (BlockPos extraPos : extraPositions) {
+                    destructionProgress.computeIfAbsent(extraPos.asLong(), l -> Sets.newTreeSet()).add(progressObj);
+                }
+            }
+        }
+    }
 
-	@Inject(method = "removeProgress(Lnet/minecraft/server/level/BlockDestructionProgress;)V", at = @At("RETURN"))
-	private void create$onRemoveProgress(BlockDestructionProgress progress, CallbackInfo ci) {
-		Set<BlockPos> extraPositions = ((BlockDestructionProgressExtension) progress).getExtraPositions();
-		if (extraPositions != null) {
-			for (BlockPos extraPos : extraPositions) {
-				long l = extraPos.asLong();
-				Set<BlockDestructionProgress> set = destructionProgress.get(l);
-				if (set != null) {
-					set.remove(progress);
-					if (set.isEmpty()) {
-						destructionProgress.remove(l);
-					}
-				}
-			}
-		}
-	}
+    @Inject(method = "removeProgress(Lnet/minecraft/server/level/BlockDestructionProgress;)V", at = @At("RETURN"))
+    private void create$onRemoveProgress(BlockDestructionProgress progress, CallbackInfo ci) {
+        Set<BlockPos> extraPositions = ((BlockDestructionProgressExtension) progress).getExtraPositions();
+        if (extraPositions != null) {
+            for (BlockPos extraPos : extraPositions) {
+                long l = extraPos.asLong();
+                Set<BlockDestructionProgress> set = destructionProgress.get(l);
+                if (set != null) {
+                    set.remove(progress);
+                    if (set.isEmpty()) {
+                        destructionProgress.remove(l);
+                    }
+                }
+            }
+        }
+    }
 }

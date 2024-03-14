@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Mixin(ParticleEngine.class)
 public interface ParticleEngineAccessor {
-	// This field cannot be ATed because its type is patched by Forge
-	@Accessor("providers")
-	Map<ResourceLocation, ParticleProvider<?>> create$getProviders();
+    // This field cannot be ATed because its type is patched by Forge
+    @Accessor("providers")
+    Map<ResourceLocation, ParticleProvider<?>> create$getProviders();
 }

@@ -8,28 +8,27 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public abstract class CachedRenderBBBlockEntity extends SyncedBlockEntity {
+    private AABB renderBoundingBox;
 
-	private AABB renderBoundingBox;
+    public CachedRenderBBBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
 
-	public CachedRenderBBBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-		super(type, pos, state);
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public AABB getRenderBoundingBox() {
+        if (renderBoundingBox == null) {
+            renderBoundingBox = createRenderBoundingBox();
+        }
+        return renderBoundingBox;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public AABB getRenderBoundingBox() {
-		if (renderBoundingBox == null) {
-			renderBoundingBox = createRenderBoundingBox();
-		}
-		return renderBoundingBox;
-	}
+    protected void invalidateRenderBoundingBox() {
+        renderBoundingBox = null;
+    }
 
-	protected void invalidateRenderBoundingBox() {
-		renderBoundingBox = null;
-	}
-
-	protected AABB createRenderBoundingBox() {
-		return super.getRenderBoundingBox();
-	}
+    protected AABB createRenderBoundingBox() {
+        return super.getRenderBoundingBox();
+    }
 
 }
