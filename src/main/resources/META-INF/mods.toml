@@ -4,7 +4,7 @@ issueTrackerURL="https://github.com/Creators-of-Create/Create/issues"
 license="MIT"
 
 [[mods]]
-modId="createponder"
+modId="create"
 # The Implementation-Version property in the jar's MANIFEST.MF file will be used as the mod version at runtime 
 version="${file.jarVersion}"
 displayName="Create Ponder"
@@ -16,21 +16,21 @@ authors="simibubi, westernat"
 description='''
 Technology that empowers the player.'''
 
-[[dependencies.createponder]]
+[[dependencies.create]]
     modId="forge"
     mandatory=true
     versionRange="[47.0.0,)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.createponder]]
+[[dependencies.create]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.20,1.21)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.createponder]]
+[[dependencies.create]]
     modId="flywheel"
     mandatory=true
     versionRange="[0.6.10,0.6.11)"
