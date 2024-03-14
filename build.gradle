@@ -116,17 +116,6 @@ dependencies {
     }
 }
 
-sourceSets.main.java {
-	if (!cc_tweaked_enable.toBoolean()) {
-        exclude 'com/simibubi/create/compat/computercraft/implementation/**'
-	}
-}
-
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-    exclude '.cache/'
-}
-
 mixin {
     add sourceSets.main, 'create.refmap.json'
 }
