@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -22,8 +21,7 @@ import java.util.Random;
 public class Create {
     public static final String ID = "create";
     public static final String NAME = "Create Ponder";
-    public static final String VERSION = "0.0.1a";
-
+    public static final String VERSION = "0.0.1b";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     /**
@@ -38,29 +36,19 @@ public class Create {
 
     public static void onCtor() {
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
-
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
         AllStructureProcessorTypes.register(modEventBus);
         AllPackets.registerPackets();
-
         AllConfigs.register(modLoadingContext);
-
-        ForgeMod.enableMilkFluid();
-
         modEventBus.addListener(Create::init);
-
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateClient.onCtorClient(modEventBus));
     }
 
     public static void init(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            AttachedRegistry.unwrapAll();
-        });
+        event.enqueueWork(() -> AttachedRegistry.unwrapAll());
     }
 
     public static ResourceLocation asResource(String path) {
         return new ResourceLocation(ID, path);
     }
-
 }

@@ -62,11 +62,11 @@ public class PonderUI extends NavigatableSimiScreen {
     public static final String REPLAY = LANG_PREFIX + "replay";
     public static final String SLOW_TEXT = LANG_PREFIX + "slow_text";
 
-    private List<PonderScene> scenes;
-    private List<PonderTag> tags;
+    private final List<PonderScene> scenes;
+    private final List<PonderTag> tags;
     private List<PonderButton> tagButtons;
     private List<LerpedFloat> tagFades;
-    private LerpedFloat fadeIn;
+    private final LerpedFloat fadeIn;
     ItemStack stack;
     PonderChapter chapter = null;
 
@@ -75,15 +75,15 @@ public class PonderUI extends NavigatableSimiScreen {
     private ItemStack hoveredTooltipItem;
     private BlockPos hoveredBlockPos;
 
-    private ClipboardManager clipboardHelper;
+    private final ClipboardManager clipboardHelper;
     private BlockPos copiedBlockPos;
 
-    private LerpedFloat finishingFlash;
-    private LerpedFloat nextUp;
+    private final LerpedFloat finishingFlash;
+    private final LerpedFloat nextUp;
     private int finishingFlashWarmup = 0;
     private int nextUpWarmup = 0;
 
-    private LerpedFloat lazyIndex;
+    private final LerpedFloat lazyIndex;
     private int index = 0;
     private PonderTag referredToByTag;
 
@@ -114,27 +114,19 @@ public class PonderUI extends NavigatableSimiScreen {
     }
 
     protected PonderUI(List<PonderScene> scenes) {
-        ResourceLocation component = scenes.get(0)
-            .getComponent();
-        if (ForgeRegistries.ITEMS.containsKey(component))
+        ResourceLocation component = scenes.get(0).getComponent();
+        if (ForgeRegistries.ITEMS.containsKey(component)) {
             stack = new ItemStack(ForgeRegistries.ITEMS.getValue(component));
-        else
+        } else {
             stack = new ItemStack(ForgeRegistries.BLOCKS.getValue(component));
-
+        }
         tags = new ArrayList<>(PonderRegistry.TAGS.getTags(component));
         this.scenes = scenes;
-        lazyIndex = LerpedFloat.linear()
-            .startWithValue(index);
-        fadeIn = LerpedFloat.linear()
-            .startWithValue(0)
-            .chase(1, .1f, Chaser.EXP);
+        lazyIndex = LerpedFloat.linear().startWithValue(index);
+        fadeIn = LerpedFloat.linear().startWithValue(0).chase(1, .1f, Chaser.EXP);
         clipboardHelper = new ClipboardManager();
-        finishingFlash = LerpedFloat.linear()
-            .startWithValue(0)
-            .chase(0, .1f, Chaser.EXP);
-        nextUp = LerpedFloat.linear()
-            .startWithValue(0)
-            .chase(0, .4f, Chaser.EXP);
+        finishingFlash = LerpedFloat.linear().startWithValue(0).chase(0, .1f, Chaser.EXP);
+        nextUp = LerpedFloat.linear().startWithValue(0).chase(0, .4f, Chaser.EXP);
     }
 
     @Override
@@ -901,7 +893,6 @@ public class PonderUI extends NavigatableSimiScreen {
         switch (pointing) {
             default:
             case DOWN:
-                divotRotation = 0;
                 boxX -= w / 2;
                 boxY -= h + divotSize + 1 + distance;
                 divotX -= divotRadius;

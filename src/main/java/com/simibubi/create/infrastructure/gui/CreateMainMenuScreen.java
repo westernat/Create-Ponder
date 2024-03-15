@@ -30,7 +30,7 @@ import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 
 public class CreateMainMenuScreen extends AbstractSimiScreen {
     public static final CubeMap PANORAMA_RESOURCES = new CubeMap(Create.asResource("textures/gui/title/background/panorama"));
@@ -48,7 +48,7 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
     protected final Screen parent;
     protected boolean returnOnClose;
 
-    private PanoramaRenderer vanillaPanorama;
+    private final PanoramaRenderer vanillaPanorama;
     private long firstRenderTime;
     private Button gettingStarted;
 
@@ -64,8 +64,9 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        if (firstRenderTime == 0L)
+        if (firstRenderTime == 0L) {
             this.firstRenderTime = Util.getMillis();
+        }
         super.render(graphics, mouseX, mouseY, partialTicks);
     }
 
@@ -76,13 +77,13 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
         float elapsedPartials = minecraft.getDeltaFrameTime();
 
         if (parent instanceof TitleScreen) {
-            if (alpha < 1)
+            if (alpha < 1) {
                 vanillaPanorama.render(elapsedPartials, 1);
+            }
             PANORAMA.render(elapsedPartials, alpha);
 
             RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
-                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             graphics.blit(PANORAMA_OVERLAY_TEXTURES, 0, 0, this.width, this.height, 0.0F, 0.0F, 16, 128, 16, 128);
         }
 
@@ -95,13 +96,12 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
             ms.translate(width / 2, 60, 200);
             ms.scale(24 * side, 24 * side, 32);
             ms.translate(-1.75 * ((alpha * alpha) / 2f + .5f), .25f, 0);
-            TransformStack.cast(ms)
-                .rotateX(45);
-            GuiGameElement.of(Items.STICK.getDefaultInstance())
+            TransformStack.cast(ms).rotateX(45);
+            GuiGameElement.of(Blocks.STRUCTURE_BLOCK.defaultBlockState())
                 .rotateBlock(0, Util.getMillis() / 32f * side, 0)
                 .render(graphics);
             ms.translate(-1, 0, -1);
-            GuiGameElement.of(Items.DEBUG_STICK.getDefaultInstance())
+            GuiGameElement.of(Blocks.JIGSAW.defaultBlockState())
                 .rotateBlock(0, Util.getMillis() / -16f * side + 22.5f, 0)
                 .render(graphics);
             ms.popPose();
@@ -122,10 +122,7 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
 
         ms.pushPose();
         ms.translate(0, 0, 200);
-        graphics.drawCenteredString(font, Components.literal(Create.NAME).withStyle(ChatFormatting.BOLD)
-                .append(
-                    Components.literal(" v" + Create.VERSION).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE)),
-            width / 2, 89, 0xFF_E4BB67);
+        graphics.drawCenteredString(font, Components.literal(Create.NAME).withStyle(ChatFormatting.BOLD).append(Components.literal(" v" + Create.VERSION).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE)), width / 2, 89, 0xFF_E4BB67);
         ms.popPose();
 
         RenderSystem.disableDepthTest();
@@ -177,13 +174,9 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
         renderables.forEach(w -> w.render(graphics, mouseX, mouseY, partialTicks));
 
         if (parent instanceof TitleScreen) {
-            if (mouseX < gettingStarted.getX() || mouseX > gettingStarted.getX() + 98)
-                return;
-            if (mouseY < gettingStarted.getY() || mouseY > gettingStarted.getY() + 20)
-                return;
-            graphics.renderComponentTooltip(font,
-                TooltipHelper.cutTextComponent(Lang.translateDirect("menu.only_ingame"), Palette.ALL_GRAY), mouseX,
-                mouseY);
+            if (mouseX < gettingStarted.getX() || mouseX > gettingStarted.getX() + 98) return;
+            if (mouseY < gettingStarted.getY() || mouseY > gettingStarted.getY() + 20) return;
+            graphics.renderComponentTooltip(font, TooltipHelper.cutTextComponent(Lang.translateDirect("menu.only_ingame"), Palette.ALL_GRAY), mouseX, mouseY);
         }
     }
 
@@ -195,9 +188,9 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
     private void linkTo(String url) {
         returnOnClose = false;
         ScreenOpener.open(new ConfirmLinkScreen((p_213069_2_) -> {
-            if (p_213069_2_)
-                Util.getPlatform()
-                    .openUri(url);
+            if (p_213069_2_) {
+                Util.getPlatform().openUri(url);
+            }
             this.minecraft.setScreen(this);
         }, url, true));
     }
@@ -229,5 +222,4 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
             pPoseStack.popPose();
         }
     }
-
 }

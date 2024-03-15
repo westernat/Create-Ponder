@@ -13,7 +13,7 @@ import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OpenCreateMenuButton extends Button {
-
-    public static final ItemStack ICON = Items.DEBUG_STICK.getDefaultInstance();
+    public static final ItemStack ICON = new ItemStack(Blocks.STRUCTURE_BLOCK.asItem());
 
     public OpenCreateMenuButton(int x, int y) {
         super(x, y, 20, 20, Components.immutableEmpty(), OpenCreateMenuButton::click, DEFAULT_NARRATION);
@@ -56,13 +55,6 @@ public class OpenCreateMenuButton extends Button {
     }
 
     public static class MenuRows {
-        public static final MenuRows MAIN_MENU = new MenuRows(Arrays.asList(
-            new SingleMenuRow("menu.singleplayer"),
-            new SingleMenuRow("menu.multiplayer"),
-            new SingleMenuRow("fml.menu.mods", "menu.online"),
-            new SingleMenuRow("narrator.button.language", "narrator.button.accessibility")
-        ));
-
         public static final MenuRows INGAME_MENU = new MenuRows(Arrays.asList(
             new SingleMenuRow("menu.returnToGame"),
             new SingleMenuRow("gui.advancements", "gui.stats"),
@@ -81,7 +73,6 @@ public class OpenCreateMenuButton extends Button {
 
     @EventBusSubscriber(value = Dist.CLIENT)
     public static class OpenConfigButtonHandler {
-
         @SubscribeEvent
         public static void onGuiInit(ScreenEvent.Init event) {
             Screen gui = event.getScreen();
@@ -104,17 +95,13 @@ public class OpenCreateMenuButton extends Button {
                     .stream()
                     .filter(w -> w instanceof AbstractWidget)
                     .map(w -> (AbstractWidget) w)
-                    .filter(w -> w.getMessage()
-                        .getString()
-                        .equals(target))
+                    .filter(w -> w.getMessage().getString().equals(target))
                     .findFirst()
-                    .ifPresent(w -> toAdd
-                        .setValue(new OpenCreateMenuButton(w.getX() + offsetX_ + (onLeft ? -20 : w.getWidth()), w.getY())));
-                if (toAdd.getValue() != null)
+                    .ifPresent(w -> toAdd.setValue(new OpenCreateMenuButton(w.getX() + offsetX_ + (onLeft ? -20 : w.getWidth()), w.getY())));
+                if (toAdd.getValue() != null) {
                     event.addListener(toAdd.getValue());
+                }
             }
         }
-
     }
-
 }

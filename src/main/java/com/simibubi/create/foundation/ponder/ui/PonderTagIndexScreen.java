@@ -22,7 +22,8 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,7 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 
     @Override
     protected void initBackTrackIcon(PonderButton backTrack) {
-        backTrack.showing(Items.DEBUG_STICK.getDefaultInstance());
+        backTrack.showing(new ItemStack(Blocks.STRUCTURE_BLOCK.asItem()));
     }
 
     @Override
@@ -89,11 +90,12 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
         double mouseX = minecraft.mouseHandler.xpos() * w.getGuiScaledWidth() / w.getScreenWidth();
         double mouseY = minecraft.mouseHandler.ypos() * w.getGuiScaledHeight() / w.getScreenHeight();
         for (GuiEventListener child : children()) {
-            if (child == backTrack)
-                continue;
-            if (child instanceof PonderButton button)
-                if (button.isMouseOver(mouseX, mouseY))
+            if (child == backTrack) continue;
+            if (child instanceof PonderButton button) {
+                if (button.isMouseOver(mouseX, mouseY)) {
                     hoveredItem = button.getTag();
+                }
+            }
         }
     }
 
@@ -115,8 +117,7 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
         int x = 31 + 20 + 8;
         int y = 31;
 
-        String title = Lang.translateDirect(WELCOME)
-            .getString();
+        String title = Lang.translateDirect(WELCOME).getString();
 
         int streakHeight = 35;
         UIRenderHelper.streak(graphics, 0, x - 4, y - 12 + streakHeight / 2, streakHeight, 240);
@@ -140,8 +141,7 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
         ms.scale(1.66f, 1.66f, 1.66f);
         ms.translate(-4, -4, 0);
         ms.scale(1.5f, 1.5f, 1.5f);
-        GuiGameElement.of(Items.DEBUG_STICK.getDefaultInstance())
-            .render(graphics);
+        GuiGameElement.of(Blocks.STRUCTURE_BLOCK.asItem()).render(graphics);
         ms.popPose();
         ms.popPose();
 
@@ -150,8 +150,7 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
         x = (width - w) / 2;
         y = getItemsY() - 10 + Math.max(itemArea.getHeight(), 48);
 
-        String desc = Lang.translateDirect(DESCRIPTION)
-            .getString();
+        String desc = Lang.translateDirect(DESCRIPTION).getString();
         int h = font.wordWrapHeight(desc, w);
 
         // PonderUI.renderBox(ms, x - 3, y - 3, w + 6, h + 6, false);
@@ -168,14 +167,12 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 
     protected void renderItems(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         List<PonderTag> tags = PonderRegistry.TAGS.getListedTags();
-        if (tags.isEmpty())
-            return;
+        if (tags.isEmpty()) return;
 
         int x = (int) (width * itemXmult);
         int y = getItemsY();
 
-        String relatedTitle = Lang.translateDirect(CATEGORIES)
-            .getString();
+        String relatedTitle = Lang.translateDirect(CATEGORIES).getString();
         int stringWidth = font.width(relatedTitle);
 
         PoseStack ms = graphics.pose();
@@ -215,8 +212,7 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
         ms.translate(0, 0, 200);
 
         if (hoveredItem != null) {
-            List<Component> list = TooltipHelper.cutStringTextComponent(hoveredItem.getDescription(),
-                Palette.ALL_GRAY);
+            List<Component> list = TooltipHelper.cutStringTextComponent(hoveredItem.getDescription(), Palette.ALL_GRAY);
             list.add(0, Components.literal(hoveredItem.getTitle()));
             graphics.renderComponentTooltip(font, list, mouseX, mouseY);
         }
@@ -227,8 +223,7 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 
     @Override
     protected String getBreadcrumbTitle() {
-        return Lang.translateDirect(TITLE)
-            .getString();
+        return Lang.translateDirect(TITLE).getString();
     }
 
     @Override
@@ -241,5 +236,4 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
         super.removed();
         hoveredItem = null;
     }
-
 }
