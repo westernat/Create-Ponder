@@ -49,6 +49,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class PonderScene {
     public static final String TITLE_KEY = "header";
 
@@ -57,27 +58,27 @@ public class PonderScene {
     private int textIndex;
     ResourceLocation sceneId;
 
-    private IntList keyframeTimes;
+    private final IntList keyframeTimes;
 
     List<PonderInstruction> schedule;
-    private List<PonderInstruction> activeSchedule;
-    private Map<UUID, PonderElement> linkedElements;
-    private Set<PonderElement> elements;
-    private List<PonderTag> tags;
+    private final List<PonderInstruction> activeSchedule;
+    private final Map<UUID, PonderElement> linkedElements;
+    private final Set<PonderElement> elements;
+    private final List<PonderTag> tags;
 
-    private PonderWorld world;
-    private String namespace;
-    private ResourceLocation component;
+    private final PonderWorld world;
+    private final String namespace;
+    private final ResourceLocation component;
     private SceneTransform transform;
-    private SceneCamera camera;
-    private Outliner outliner;
+    private final SceneCamera camera;
+    private final Outliner outliner;
 //	private String defaultTitle;
 
     private Vec3 pointOfInterest;
     private Vec3 chasingPointOfInterest;
-    private WorldSectionElement baseWorldSection;
+    private final WorldSectionElement baseWorldSection;
     @Nullable
-    private Entity renderViewEntity;
+    private final Entity renderViewEntity;
 
     int basePlateOffsetX;
     int basePlateOffsetZ;
@@ -91,8 +92,9 @@ public class PonderScene {
     private int currentTime;
 
     public PonderScene(PonderWorld world, String namespace, ResourceLocation component, Collection<PonderTag> tags) {
-        if (world != null)
+        if (world != null) {
             world.scene = this;
+        }
 
         pointOfInterest = Vec3.ZERO;
         textIndex = 1;
@@ -130,38 +132,34 @@ public class PonderScene {
 
         forEach(WorldSectionElement.class, wse -> {
             wse.resetSelectedBlock();
-            if (!wse.isVisible())
-                return;
+            if (!wse.isVisible()) return;
             Pair<Vec3, BlockHitResult> rayTrace = wse.rayTrace(world, from, to);
-            if (rayTrace == null)
-                return;
-            double distanceTo = rayTrace.getFirst()
-                .distanceTo(from);
-            if (nearestHit.getValue() != null && distanceTo >= bestDistance.getValue())
-                return;
+            if (rayTrace == null) return;
+            double distanceTo = rayTrace.getFirst().distanceTo(from);
+            if (nearestHit.getValue() != null && distanceTo >= bestDistance.getValue()) return;
 
             nearestHit.setValue(Pair.of(wse, rayTrace));
             bestDistance.setValue(distanceTo);
         });
 
-        if (nearestHit.getValue() == null)
+        if (nearestHit.getValue() == null) {
             return Pair.of(ItemStack.EMPTY, null);
+        }
 
-        Pair<Vec3, BlockHitResult> selectedHit = nearestHit.getValue()
-            .getSecond();
-        BlockPos selectedPos = selectedHit.getSecond()
-            .getBlockPos();
+        Pair<Vec3, BlockHitResult> selectedHit = nearestHit.getValue().getSecond();
+        BlockPos selectedPos = selectedHit.getSecond().getBlockPos();
 
         BlockPos origin = new BlockPos(basePlateOffsetX, 0, basePlateOffsetZ);
-        if (!world.getBounds()
-            .isInside(selectedPos))
+        if (!world.getBounds().isInside(selectedPos)) {
             return Pair.of(ItemStack.EMPTY, null);
+        }
         if (BoundingBox.fromCorners(origin, origin.offset(new Vec3i(basePlateSize - 1, 0, basePlateSize - 1)))
             .isInside(selectedPos)) {
-            if (PonderIndex.editingModeActive())
+            if (PonderIndex.editingModeActive()) {
                 nearestHit.getValue()
                     .getFirst()
                     .selectBlock(selectedPos);
+            }
             return Pair.of(ItemStack.EMPTY, selectedPos);
         }
 
@@ -170,13 +168,10 @@ public class PonderScene {
             .selectBlock(selectedPos);
         BlockState blockState = world.getBlockState(selectedPos);
 
-        Direction direction = selectedHit.getSecond()
-            .getDirection();
-        Vec3 location = selectedHit.getSecond()
-            .getLocation();
+        Direction direction = selectedHit.getSecond().getDirection();
+        Vec3 location = selectedHit.getSecond().getLocation();
 
-        ItemStack pickBlock = blockState.getCloneItemStack(new BlockHitResult(location, direction, selectedPos, true),
-            world, selectedPos, Minecraft.getInstance().player);
+        ItemStack pickBlock = blockState.getCloneItemStack(new BlockHitResult(location, direction, selectedPos, true), world, selectedPos, Minecraft.getInstance().player);
 
         return Pair.of(pickBlock, selectedPos);
     }
@@ -234,8 +229,9 @@ public class PonderScene {
         forEachVisible(PonderSceneElement.class, e -> e.renderFirst(world, buffer, ms, pt));
         mc.cameraEntity = prevRVE;
 
-        for (RenderType type : RenderType.chunkBufferLayers())
+        for (RenderType type : RenderType.chunkBufferLayers()) {
             forEachVisible(PonderSceneElement.class, e -> e.renderLayer(world, buffer, type, ms, pt));
+        }
 
         forEachVisible(PonderSceneElement.class, e -> e.renderLast(world, buffer, ms, pt));
         camera.set(transform.xRotation.getValue(pt) + 90, transform.yRotation.getValue(pt) + 180);
@@ -255,8 +251,9 @@ public class PonderScene {
     }
 
     public void setPointOfInterest(Vec3 poi) {
-        if (chasingPointOfInterest == null)
+        if (chasingPointOfInterest == null) {
             pointOfInterest = poi;
+        }
         chasingPointOfInterest = poi;
     }
 
@@ -265,37 +262,39 @@ public class PonderScene {
     }
 
     public void tick() {
-        if (chasingPointOfInterest != null)
+        if (chasingPointOfInterest != null) {
             pointOfInterest = VecHelper.lerp(.25f, pointOfInterest, chasingPointOfInterest);
+        }
 
         outliner.tickOutlines();
         world.tick();
         transform.tick();
         forEach(e -> e.tick(this));
 
-        if (currentTime < totalTime)
+        if (currentTime < totalTime) {
             currentTime++;
+        }
 
         for (Iterator<PonderInstruction> iterator = activeSchedule.iterator(); iterator.hasNext(); ) {
             PonderInstruction instruction = iterator.next();
             instruction.tick(this);
             if (instruction.isComplete()) {
                 iterator.remove();
-                if (instruction.isBlocking())
-                    break;
+                if (instruction.isBlocking()) break;
                 continue;
             }
-            if (instruction.isBlocking())
-                break;
+            if (instruction.isBlocking()) break;
         }
 
-        if (activeSchedule.isEmpty())
+        if (activeSchedule.isEmpty()) {
             finished = true;
+        }
     }
 
     public void seekToTime(int time) {
-        if (time < currentTime)
+        if (time < currentTime) {
             throw new IllegalStateException("Cannot seek backwards. Rewind first.");
+        }
 
         while (currentTime < time && !finished) {
             forEach(e -> e.whileSkipping(this));
@@ -306,8 +305,9 @@ public class PonderScene {
     }
 
     public void addToSceneTime(int time) {
-        if (!stoppedCounting)
+        if (!stoppedCounting) {
             totalTime += time;
+        }
     }
 
     public void stopCounting() {
@@ -315,8 +315,9 @@ public class PonderScene {
     }
 
     public void markKeyframe(int offset) {
-        if (!stoppedCounting)
+        if (!stoppedCounting) {
             keyframeTimes.add(totalTime + offset);
+        }
     }
 
     public void addElement(PonderElement e) {
@@ -340,20 +341,25 @@ public class PonderScene {
     }
 
     public void forEach(Consumer<? super PonderElement> function) {
-        for (PonderElement elemtent : elements)
+        for (PonderElement elemtent : elements) {
             function.accept(elemtent);
+        }
     }
 
     public <T extends PonderElement> void forEach(Class<T> type, Consumer<T> function) {
-        for (PonderElement element : elements)
-            if (type.isInstance(element))
+        for (PonderElement element : elements) {
+            if (type.isInstance(element)) {
                 function.accept(type.cast(element));
+            }
+        }
     }
 
     public <T extends PonderElement> void forEachVisible(Class<T> type, Consumer<T> function) {
-        for (PonderElement element : elements)
-            if (type.isInstance(element) && element.isVisible())
+        for (PonderElement element : elements) {
+            if (type.isInstance(element) && element.isVisible()) {
                 function.accept(type.cast(element));
+            }
+        }
     }
 
     public <T extends Entity> void forEachWorldEntity(Class<T> type, Consumer<T> function) {
@@ -524,16 +530,16 @@ public class PonderScene {
             UIRenderHelper.flipForGuiRender(ms);
             float f = 30 * scaleFactor;
             ms.scale(f, f, f);
-            ms.translate((basePlateSize) / -2f - basePlateOffsetX, -1f + yOffset,
-                (basePlateSize) / -2f - basePlateOffsetZ);
+            ms.translate((basePlateSize) / -2f - basePlateOffsetX, -1f + yOffset, (basePlateSize) / -2f - basePlateOffsetZ);
 
             return ms;
         }
 
         public void updateSceneRVE(float pt) {
             Vec3 v = screenToScene(width / 2, height / 2, 500, pt);
-            if (renderViewEntity != null)
+            if (renderViewEntity != null) {
                 renderViewEntity.setPos(v.x, v.y, v.z);
+            }
         }
 
         public Vec3 screenToScene(double x, double y, int depth, float pt) {
@@ -552,8 +558,7 @@ public class PonderScene {
             float f = 1f / (30 * scaleFactor);
 
             vec = vec.multiply(f, -f, f);
-            vec = vec.subtract((basePlateSize) / -2f - basePlateOffsetX, -1f + yOffset,
-                (basePlateSize) / -2f - basePlateOffsetZ);
+            vec = vec.subtract((basePlateSize) / -2f - basePlateOffsetX, -1f + yOffset, (basePlateSize) / -2f - basePlateOffsetZ);
 
             return vec;
         }
@@ -566,20 +571,14 @@ public class PonderScene {
         }
 
         protected void refreshMatrix(float pt) {
-            if (cachedMat != null)
-                return;
-            cachedMat = apply(new PoseStack(), pt).last()
-                .pose();
+            if (cachedMat != null) return;
+            cachedMat = apply(new PoseStack(), pt).last().pose();
         }
-
     }
 
-    public class SceneCamera extends Camera {
-
+    public static class SceneCamera extends Camera {
         public void set(float xRotation, float yRotation) {
             setRotation(yRotation, xRotation);
         }
-
     }
-
 }

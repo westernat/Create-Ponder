@@ -7,8 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
+@SuppressWarnings("unused")
 public class PonderRegistrationHelper {
-
     protected String namespace;
 
     public PonderRegistrationHelper(String namespace) {
@@ -94,7 +94,5 @@ public class PonderRegistrationHelper {
         public MultiSceneBuilder addStoryBoard(String schematicPath, PonderStoryBoard storyBoard, Consumer<PonderStoryBoardEntry> extras) {
             return addStoryBoard(asLocation(schematicPath), storyBoard, extras);
         }
-
     }
-
 }

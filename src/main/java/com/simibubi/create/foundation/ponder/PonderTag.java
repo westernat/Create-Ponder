@@ -11,8 +11,8 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@SuppressWarnings("unused")
 public class PonderTag implements ScreenElement {
-
     public static final PonderTag HIGHLIGHT_ALL = new PonderTag(Create.asResource("_all"));
 
     private final ResourceLocation id;
@@ -67,10 +67,12 @@ public class PonderTag implements ScreenElement {
     }
 
     public PonderTag item(ItemLike item, boolean useAsIcon, boolean useAsMainItem) {
-        if (useAsIcon)
+        if (useAsIcon) {
             this.itemIcon = new ItemStack(item);
-        if (useAsMainItem)
+        }
+        if (useAsMainItem) {
             this.mainItem = new ItemStack(item);
+        }
         return this;
     }
 
@@ -90,10 +92,8 @@ public class PonderTag implements ScreenElement {
         } else if (!itemIcon.isEmpty()) {
             ms.translate(-2, -2, 0);
             ms.scale(1.25f, 1.25f, 1.25f);
-            GuiGameElement.of(itemIcon)
-                .render(graphics);
+            GuiGameElement.of(itemIcon).render(graphics);
         }
         ms.popPose();
     }
-
 }

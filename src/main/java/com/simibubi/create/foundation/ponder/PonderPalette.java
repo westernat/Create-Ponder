@@ -3,7 +3,6 @@ package com.simibubi.create.foundation.ponder;
 import com.simibubi.create.foundation.utility.Color;
 
 public enum PonderPalette {
-
     WHITE(0xFF_eeeeee),
     BLACK(0xFF_221111),
 

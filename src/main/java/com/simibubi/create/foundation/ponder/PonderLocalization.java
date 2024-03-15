@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+@SuppressWarnings("unused")
 public class PonderLocalization {
     static final Map<ResourceLocation, String> SHARED = new HashMap<>();
     static final Map<ResourceLocation, Couple<String>> TAG = new HashMap<>();
@@ -32,8 +33,7 @@ public class PonderLocalization {
     }
 
     public static void registerSpecific(ResourceLocation sceneId, String key, String enUS) {
-        SPECIFIC.computeIfAbsent(sceneId, $ -> new HashMap<>())
-            .put(key, enUS);
+        SPECIFIC.computeIfAbsent(sceneId, $ -> new HashMap<>()).put(key, enUS);
     }
 
     //
@@ -63,35 +63,37 @@ public class PonderLocalization {
     //
 
     public static String getShared(ResourceLocation key) {
-        if (PonderIndex.editingModeActive())
+        if (PonderIndex.editingModeActive()) {
             return SHARED.containsKey(key) ? SHARED.get(key) : ("unregistered shared entry: " + key);
+        }
         return I18n.get(langKeyForShared(key));
     }
 
     public static String getTag(ResourceLocation key) {
-        if (PonderIndex.editingModeActive())
-            return TAG.containsKey(key) ? TAG.get(key)
-                .getFirst() : ("unregistered tag entry: " + key);
+        if (PonderIndex.editingModeActive()) {
+            return TAG.containsKey(key) ? TAG.get(key).getFirst() : ("unregistered tag entry: " + key);
+        }
         return I18n.get(langKeyForTag(key));
     }
 
     public static String getTagDescription(ResourceLocation key) {
-        if (PonderIndex.editingModeActive())
-            return TAG.containsKey(key) ? TAG.get(key)
-                .getSecond() : ("unregistered tag entry: " + key);
+        if (PonderIndex.editingModeActive()) {
+            return TAG.containsKey(key) ? TAG.get(key).getSecond() : ("unregistered tag entry: " + key);
+        }
         return I18n.get(langKeyForTagDescription(key));
     }
 
     public static String getChapter(ResourceLocation key) {
-        if (PonderIndex.editingModeActive())
+        if (PonderIndex.editingModeActive()) {
             return CHAPTER.containsKey(key) ? CHAPTER.get(key) : ("unregistered chapter entry: " + key);
+        }
         return I18n.get(langKeyForChapter(key));
     }
 
     public static String getSpecific(ResourceLocation sceneId, String k) {
-        if (PonderIndex.editingModeActive())
-            return SPECIFIC.get(sceneId)
-                .get(k);
+        if (PonderIndex.editingModeActive()) {
+            return SPECIFIC.get(sceneId).get(k);
+        }
         return I18n.get(langKeyForSpecific(sceneId, k));
     }
 
@@ -100,14 +102,13 @@ public class PonderLocalization {
     private static boolean sceneLangGenerated = false;
 
     public static void generateSceneLang() {
-        if (sceneLangGenerated) {
-            return;
-        }
+        if (sceneLangGenerated) return;
 
         sceneLangGenerated = true;
         PonderRegistry.ALL.forEach((id, list) -> {
-            for (int i = 0; i < list.size(); i++)
+            for (int i = 0; i < list.size(); i++) {
                 PonderRegistry.compileScene(i, list.get(i), null);
+            }
         });
     }
 

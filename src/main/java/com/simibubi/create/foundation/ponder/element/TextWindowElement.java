@@ -20,8 +20,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class TextWindowElement extends AnimatedOverlayElement {
-
     Supplier<String> textGetter = () -> "(?) No text was provided";
     String bakedText;
 
@@ -161,5 +161,4 @@ public class TextWindowElement extends AnimatedOverlayElement {
     public int getColor() {
         return color;
     }
-
 }

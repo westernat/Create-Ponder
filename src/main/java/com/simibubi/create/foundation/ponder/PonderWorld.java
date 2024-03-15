@@ -36,13 +36,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
 
 public class PonderWorld extends SchematicWorld {
-
     public PonderScene scene;
 
     protected Map<BlockPos, BlockState> originalBlocks;
@@ -73,8 +73,7 @@ public class PonderWorld extends SchematicWorld {
         originalBlockEntities.clear();
         blocks.forEach((k, v) -> originalBlocks.put(k, v));
         blockEntities.forEach((k, v) -> originalBlockEntities.put(k, v.saveWithFullMetadata()));
-        entities.forEach(e -> EntityType.create(e.serializeNBT(), this)
-            .ifPresent(originalEntities::add));
+        entities.forEach(e -> EntityType.create(e.serializeNBT(), this).ifPresent(originalEntities::add));
     }
 
     public void restore() {
@@ -90,8 +89,7 @@ public class PonderWorld extends SchematicWorld {
             blockEntities.put(k, blockEntity);
             renderedBlockEntities.add(blockEntity);
         });
-        originalEntities.forEach(e -> EntityType.create(e.serializeNBT(), this)
-            .ifPresent(entities::add));
+        originalEntities.forEach(e -> EntityType.create(e.serializeNBT(), this).ifPresent(entities::add));
         particles.clearEffects();
     }
 
@@ -109,8 +107,9 @@ public class PonderWorld extends SchematicWorld {
     }
 
     private void redraw() {
-        if (scene != null)
+        if (scene != null) {
             scene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
+        }
     }
 
     public void pushFakeLight(int light) {
@@ -122,7 +121,7 @@ public class PonderWorld extends SchematicWorld {
     }
 
     @Override
-    public int getBrightness(LightLayer p_226658_1_, BlockPos p_226658_2_) {
+    public int getBrightness(@NotNull LightLayer p_226658_1_, @NotNull BlockPos p_226658_2_) {
         return overrideLight == -1 ? 15 : overrideLight;
     }
 
@@ -135,11 +134,13 @@ public class PonderWorld extends SchematicWorld {
     }
 
     @Override
-    public BlockState getBlockState(BlockPos globalPos) {
-        if (mask != null && !mask.test(globalPos.subtract(anchor)))
+    public @NotNull BlockState getBlockState(BlockPos globalPos) {
+        if (mask != null && !mask.test(globalPos.subtract(anchor))) {
             return Blocks.AIR.defaultBlockState();
-        if (currentlyTickingEntities && globalPos.getY() < 0)
+        }
+        if (currentlyTickingEntities && globalPos.getY() < 0) {
             return Blocks.AIR.defaultBlockState();
+        }
         return super.getBlockState(globalPos);
     }
 
@@ -169,16 +170,13 @@ public class PonderWorld extends SchematicWorld {
         buffer.draw(RenderType.entitySmoothCutout(InventoryMenu.BLOCK_ATLAS));
     }
 
-    private void renderEntity(Entity entity, double x, double y, double z, float pt, PoseStack ms,
-                              MultiBufferSource buffer) {
-        double d0 = Mth.lerp((double) pt, entity.xOld, entity.getX());
-        double d1 = Mth.lerp((double) pt, entity.yOld, entity.getY());
-        double d2 = Mth.lerp((double) pt, entity.zOld, entity.getZ());
+    private void renderEntity(Entity entity, double x, double y, double z, float pt, PoseStack ms, MultiBufferSource buffer) {
+        double d0 = Mth.lerp(pt, entity.xOld, entity.getX());
+        double d1 = Mth.lerp(pt, entity.yOld, entity.getY());
+        double d2 = Mth.lerp(pt, entity.zOld, entity.getZ());
         float f = Mth.lerp(pt, entity.yRotO, entity.getYRot());
-        EntityRenderDispatcher renderManager = Minecraft.getInstance()
-            .getEntityRenderDispatcher();
-        int light = renderManager.getRenderer(entity)
-            .getPackedLightCoords(entity, pt);
+        EntityRenderDispatcher renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
+        int light = renderManager.getRenderer(entity).getPackedLightCoords(entity, pt);
         renderManager.render(entity, d0 - x, d1 - y, d2 - z, f, pt, ms, buffer, light);
     }
 
@@ -200,11 +198,13 @@ public class PonderWorld extends SchematicWorld {
             entity.zOld = entity.getZ();
             entity.tick();
 
-            if (entity.getY() <= -.5f)
+            if (entity.getY() <= -.5f) {
                 entity.discard();
+            }
 
-            if (!entity.isAlive())
+            if (!entity.isAlive()) {
                 iterator.remove();
+            }
         }
 
         currentlyTickingEntities = false;
@@ -222,8 +222,7 @@ public class PonderWorld extends SchematicWorld {
 
     @Nullable
     @SuppressWarnings("unchecked")
-    private <T extends ParticleOptions> Particle makeParticle(T data, double x, double y, double z, double mx, double my,
-                                                              double mz) {
+    private <T extends ParticleOptions> Particle makeParticle(T data, double x, double y, double z, double mx, double my, double mz) {
         ResourceLocation key = RegisteredObjects.getKeyOrThrow(data.getType());
         ParticleProvider<T> particleProvider = (ParticleProvider<T>) particleProviders.get(key);
         return particleProvider == null ? null
@@ -231,29 +230,30 @@ public class PonderWorld extends SchematicWorld {
     }
 
     @Override
-    public boolean setBlock(BlockPos pos, BlockState arg1, int arg2) {
+    public boolean setBlock(@NotNull BlockPos pos, @NotNull BlockState arg1, int arg2) {
         return super.setBlock(pos, arg1, arg2);
     }
 
     public void addParticle(Particle p) {
-        if (p != null)
+        if (p != null) {
             particles.addParticle(p);
+        }
     }
 
     @Override
     protected void onBEadded(BlockEntity blockEntity, BlockPos pos) {
         super.onBEadded(blockEntity, pos);
-        if (!(blockEntity instanceof SmartBlockEntity))
-            return;
-        SmartBlockEntity smartBlockEntity = (SmartBlockEntity) blockEntity;
-        smartBlockEntity.markVirtual();
+        if (blockEntity instanceof SmartBlockEntity smartBlockEntity) {
+            smartBlockEntity.markVirtual();
+        }
     }
 
     public void setBlockBreakingProgress(BlockPos pos, int damage) {
-        if (damage == 0)
+        if (damage == 0) {
             blockBreakingProgressions.remove(pos);
-        else
+        } else {
             blockBreakingProgressions.put(pos, damage - 1);
+        }
     }
 
     public Map<BlockPos, Integer> getBlockBreakingProgressions() {
@@ -262,8 +262,7 @@ public class PonderWorld extends SchematicWorld {
 
     public void addBlockDestroyEffects(BlockPos pos, BlockState state) {
         VoxelShape voxelshape = state.getShape(this, pos);
-        if (voxelshape.isEmpty())
-            return;
+        if (voxelshape.isEmpty()) return;
 
         AABB bb = voxelshape.bounds();
         double d1 = Math.min(1.0D, bb.maxX - bb.minX);
@@ -282,8 +281,7 @@ public class PonderWorld extends SchematicWorld {
                     double d7 = d4 * d1 + bb.minX;
                     double d8 = d5 * d2 + bb.minY;
                     double d9 = d6 * d3 + bb.minZ;
-                    addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + d7, pos.getY() + d8,
-                        pos.getZ() + d9, d4 - 0.5D, d5 - 0.5D, d6 - 0.5D);
+                    addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + d7, pos.getY() + d8, pos.getZ() + d9, d4 - 0.5D, d5 - 0.5D, d6 - 0.5D);
                 }
             }
         }

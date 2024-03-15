@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Queue;
 
 public class PonderWorldParticles {
-
     private final Map<ParticleRenderType, Queue<Particle>> byType = Maps.newIdentityHashMap();
     private final Queue<Particle> queue = Queues.newArrayDeque();
 
@@ -39,23 +38,22 @@ public class PonderWorldParticles {
         this.byType.forEach((p_228347_1_, p_228347_2_) -> this.tickParticleList(p_228347_2_));
 
         Particle particle;
-        if (queue.isEmpty())
-            return;
-        while ((particle = this.queue.poll()) != null)
-            this.byType.computeIfAbsent(particle.getRenderType(), $ -> EvictingQueue.create(16384))
-                .add(particle);
+        if (queue.isEmpty()) return;
+        while ((particle = this.queue.poll()) != null) {
+            this.byType.computeIfAbsent(particle.getRenderType(), $ -> EvictingQueue.create(16384)).add(particle);
+        }
     }
 
     private void tickParticleList(Collection<Particle> p_187240_1_) {
-        if (p_187240_1_.isEmpty())
-            return;
+        if (p_187240_1_.isEmpty()) return;
 
         Iterator<Particle> iterator = p_187240_1_.iterator();
         while (iterator.hasNext()) {
             Particle particle = iterator.next();
             particle.tick();
-            if (!particle.isAlive())
+            if (!particle.isAlive()) {
                 iterator.remove();
+            }
         }
     }
 
@@ -71,8 +69,7 @@ public class PonderWorldParticles {
         RenderSystem.applyModelViewMatrix();
 
         for (ParticleRenderType iparticlerendertype : this.byType.keySet()) {
-            if (iparticlerendertype == ParticleRenderType.NO_RENDER)
-                continue;
+            if (iparticlerendertype == ParticleRenderType.NO_RENDER) continue;
             Iterable<Particle> iterable = this.byType.get(iparticlerendertype);
             if (iterable != null) {
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -82,8 +79,9 @@ public class PonderWorldParticles {
                 BufferBuilder bufferbuilder = tessellator.getBuilder();
                 iparticlerendertype.begin(bufferbuilder, mc.textureManager);
 
-                for (Particle particle : iterable)
+                for (Particle particle : iterable) {
                     particle.render(bufferbuilder, renderInfo, pt);
+                }
 
                 iparticlerendertype.end(tessellator);
             }
@@ -99,5 +97,4 @@ public class PonderWorldParticles {
     public void clearEffects() {
         this.byType.clear();
     }
-
 }

@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PonderChapterRegistry {
-
     private final Map<ResourceLocation, Pair<PonderChapter, List<PonderStoryBoardEntry>>> chapters;
 
     public PonderChapterRegistry() {
@@ -26,10 +25,7 @@ public class PonderChapterRegistry {
     @Nullable
     PonderChapter getChapter(ResourceLocation id) {
         Pair<PonderChapter, List<PonderStoryBoardEntry>> pair = chapters.get(id);
-        if (pair == null)
-            return null;
-
-        return pair.getFirst();
+        return pair == null ? null : pair.getFirst();
     }
 
     public void addStoriesToChapter(@Nonnull PonderChapter chapter, PonderStoryBoardEntry... entries) {
@@ -50,5 +46,4 @@ public class PonderChapterRegistry {
     public List<PonderStoryBoardEntry> getStories(PonderChapter chapter) {
         return chapters.get(chapter.getId()).getSecond();
     }
-
 }

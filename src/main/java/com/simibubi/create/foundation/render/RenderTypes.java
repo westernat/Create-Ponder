@@ -66,25 +66,23 @@ public class RenderTypes extends RenderStateShard {
     }
 
     public static RenderType getGlowingTranslucent(ResourceLocation texture) {
-        return RenderType.create(createLayerName("glowing_translucent"), DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS,
-            256, true, true, RenderType.CompositeState.builder()
-                .setShaderState(GLOWING_SHADER)
-                .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
-                .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                .setLightmapState(LIGHTMAP)
-                .setOverlayState(OVERLAY)
-                .createCompositeState(true));
-    }
-
-    private static final RenderType ADDITIVE = RenderType.create(createLayerName("additive"), DefaultVertexFormat.BLOCK,
-        VertexFormat.Mode.QUADS, 256, true, true, RenderType.CompositeState.builder()
-            .setShaderState(RENDERTYPE_SOLID_SHADER)
-            .setTextureState(new RenderStateShard.TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false))
-            .setTransparencyState(ADDITIVE_TRANSPARENCY)
-            .setCullState(NO_CULL)
+        return RenderType.create(createLayerName("glowing_translucent"), DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, RenderType.CompositeState.builder()
+            .setShaderState(GLOWING_SHADER)
+            .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+            .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
             .setLightmapState(LIGHTMAP)
             .setOverlayState(OVERLAY)
             .createCompositeState(true));
+    }
+
+    private static final RenderType ADDITIVE = RenderType.create(createLayerName("additive"), DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, true, true, RenderType.CompositeState.builder()
+        .setShaderState(RENDERTYPE_SOLID_SHADER)
+        .setTextureState(new RenderStateShard.TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false))
+        .setTransparencyState(ADDITIVE_TRANSPARENCY)
+        .setCullState(NO_CULL)
+        .setLightmapState(LIGHTMAP)
+        .setOverlayState(OVERLAY)
+        .createCompositeState(true));
 
     public static RenderType getAdditive() {
         return ADDITIVE;

@@ -10,8 +10,8 @@ import net.minecraft.world.level.ItemLike;
 
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class PonderTagRegistry {
-
     private final Multimap<ResourceLocation, PonderTag> tags;
     private final Multimap<PonderChapter, PonderTag> chapterTags;
 
@@ -76,7 +76,6 @@ public class PonderTagRegistry {
     }
 
     public class ItemBuilder {
-
         private final Collection<ResourceLocation> items;
 
         private ItemBuilder(ResourceLocation... items) {
@@ -87,11 +86,9 @@ public class PonderTagRegistry {
             items.forEach(i -> PonderTagRegistry.this.add(tag, i));
             return this;
         }
-
     }
 
     public class TagBuilder {
-
         private final PonderTag tag;
 
         private TagBuilder(PonderTag tag) {
@@ -110,7 +107,5 @@ public class PonderTagRegistry {
         public TagBuilder add(ItemProviderEntry<?> entry) {
             return add(entry.get());
         }
-
     }
-
 }

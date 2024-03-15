@@ -10,8 +10,8 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Helpful shortcuts for marking boundaries, points or sections inside the scene
  */
+@SuppressWarnings("unused")
 public class SceneBuildingUtil {
-
     public final SelectionUtil select;
     public final VectorUtil vector;
     public final PositionUtil grid;
@@ -26,7 +26,6 @@ public class SceneBuildingUtil {
     }
 
     public static class PositionUtil {
-
         public BlockPos at(int x, int y, int z) {
             return new BlockPos(x, y, z);
         }
@@ -34,11 +33,9 @@ public class SceneBuildingUtil {
         public BlockPos zero() {
             return at(0, 0, 0);
         }
-
     }
 
     public class VectorUtil {
-
         public Vec3 centerOf(int x, int y, int z) {
             return centerOf(grid.at(x, y, z));
         }
@@ -60,18 +57,15 @@ public class SceneBuildingUtil {
         }
 
         public Vec3 blockSurface(BlockPos pos, Direction face, float margin) {
-            return centerOf(pos).add(Vec3.atLowerCornerOf(face.getNormal())
-                .scale(.5f + margin));
+            return centerOf(pos).add(Vec3.atLowerCornerOf(face.getNormal()).scale(.5f + margin));
         }
 
         public Vec3 of(double x, double y, double z) {
             return new Vec3(x, y, z);
         }
-
     }
 
     public class SelectionUtil {
-
         public Selection everywhere() {
             return Selection.of(sceneBounds);
         }
@@ -105,14 +99,11 @@ public class SceneBuildingUtil {
         }
 
         public Selection layers(int y, int height) {
-            return cuboid(new BlockPos(0, y, 0), new Vec3i(sceneBounds.getXSpan() - 1,
-                Math.min(sceneBounds.getYSpan() - y, height) - 1, sceneBounds.getZSpan() - 1));
+            return cuboid(new BlockPos(0, y, 0), new Vec3i(sceneBounds.getXSpan() - 1, Math.min(sceneBounds.getYSpan() - y, height) - 1, sceneBounds.getZSpan() - 1));
         }
 
         public Selection cuboid(BlockPos origin, Vec3i size) {
             return Selection.of(BoundingBox.fromCorners(origin, origin.offset(size)));
         }
-
     }
-
 }

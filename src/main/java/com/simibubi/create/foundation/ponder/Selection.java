@@ -13,7 +13,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public abstract class Selection implements Predicate<BlockPos> {
-
     public static Selection of(BoundingBox bb) {
         return new Simple(bb);
     }
@@ -84,10 +83,12 @@ public abstract class Selection implements Predicate<BlockPos> {
 
         private Vec3 evalCenter() {
             Vec3 center = Vec3.ZERO;
-            if (posSet.isEmpty())
+            if (posSet.isEmpty()) {
                 return center;
-            for (BlockPos blockPos : posSet)
+            }
+            for (BlockPos blockPos : posSet) {
                 center = center.add(Vec3.atLowerCornerOf(blockPos));
+            }
             center = center.scale(1f / posSet.size());
             return center.add(new Vec3(.5, .5, .5));
         }
@@ -100,9 +101,8 @@ public abstract class Selection implements Predicate<BlockPos> {
     }
 
     private static class Simple extends Selection {
-
-        private BoundingBox bb;
-        private AABB aabb;
+        private final BoundingBox bb;
+        private final AABB aabb;
 
         public Simple(BoundingBox bb) {
             this.bb = bb;
@@ -126,8 +126,7 @@ public abstract class Selection implements Predicate<BlockPos> {
 
         @Override
         public void forEach(Consumer<BlockPos> callback) {
-            BlockPos.betweenClosedStream(bb)
-                .forEach(callback);
+            BlockPos.betweenClosedStream(bb).forEach(callback);
         }
 
         @Override
@@ -148,7 +147,5 @@ public abstract class Selection implements Predicate<BlockPos> {
         public Selection copy() {
             return new Simple(new BoundingBox(bb.minX(), bb.minY(), bb.minZ(), bb.maxX(), bb.maxY(), bb.maxZ()));
         }
-
     }
-
 }

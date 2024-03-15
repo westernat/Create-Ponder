@@ -24,6 +24,7 @@ import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -111,28 +112,23 @@ public class WrappedWorld extends Level {
     }
 
     @Override
-    public void playSeededSound(Player p_220363_, double p_220364_, double p_220365_, double p_220366_,
-                                SoundEvent p_220367_, SoundSource p_220368_, float p_220369_, float p_220370_, long p_220371_) {
+    public void playSeededSound(@Nullable Player p_220363_, double p_220364_, double p_220365_, double p_220366_, SoundEvent p_220367_, SoundSource p_220368_, float p_220369_, float p_220370_, long p_220371_) {
     }
 
     @Override
-    public void playSeededSound(Player pPlayer, double pX, double pY, double pZ, Holder<SoundEvent> pSound,
-                                SoundSource pSource, float pVolume, float pPitch, long pSeed) {
+    public void playSeededSound(@Nullable Player pPlayer, double pX, double pY, double pZ, Holder<SoundEvent> pSound, SoundSource pSource, float pVolume, float pPitch, long pSeed) {
     }
 
     @Override
-    public void playSeededSound(Player pPlayer, Entity pEntity, Holder<SoundEvent> pSound, SoundSource pCategory,
-                                float pVolume, float pPitch, long pSeed) {
+    public void playSeededSound(@Nullable Player pPlayer, Entity pEntity, Holder<SoundEvent> pSound, SoundSource pCategory, float pVolume, float pPitch, long pSeed) {
     }
 
     @Override
-    public void playSound(@Nullable Player player, double x, double y, double z, SoundEvent soundIn,
-                          SoundSource category, float volume, float pitch) {
+    public void playSound(@Nullable Player player, double x, double y, double z, SoundEvent soundIn, SoundSource category, float volume, float pitch) {
     }
 
     @Override
-    public void playSound(@Nullable Player p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_,
-                          SoundSource p_217384_4_, float p_217384_5_, float p_217384_6_) {
+    public void playSound(@Nullable Player p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_, SoundSource p_217384_4_, float p_217384_5_, float p_217384_6_) {
     }
 
     @Override
@@ -146,7 +142,7 @@ public class WrappedWorld extends Level {
     }
 
     @Override
-    public boolean addFreshEntity(Entity entityIn) {
+    public boolean addFreshEntity(@NotNull Entity entityIn) {
         ((EntityAccessor) entityIn).create$callSetLevel(world);
         return world.addFreshEntity(entityIn);
     }

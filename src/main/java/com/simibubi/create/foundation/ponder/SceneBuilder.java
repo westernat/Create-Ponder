@@ -38,8 +38,8 @@ import java.util.function.UnaryOperator;
 /**
  * Enqueue instructions to the schedule via this object's methods.
  */
+@SuppressWarnings("unused")
 public class SceneBuilder {
-
     /**
      * Ponder's toolkit for showing information on top of the scene world, such as
      * highlighted bounding boxes, texts, icons and keybindings.
@@ -84,9 +84,6 @@ public class SceneBuilder {
      * Assign a unique translation key, as well as the standard english translation
      * for this scene's title using this method, anywhere inside the program
      * function.
-     *
-     * @param sceneId
-     * @param title
      */
     public void title(String sceneId, String title) {
         scene.sceneId = new ResourceLocation(scene.getNamespace(), sceneId);
@@ -206,8 +203,6 @@ public class SceneBuilder {
 
     /**
      * Pans the scene's camera view around the vertical axis by the given amount
-     *
-     * @param degrees
      */
     public void rotateCameraY(float degrees) {
         addInstruction(new RotateSceneInstruction(0, degrees, true));
@@ -245,8 +240,7 @@ public class SceneBuilder {
 
         public void createRedstoneParticles(BlockPos pos, int color, int amount) {
             Vector3f rgb = new Color(color).asVectorF();
-            addInstruction(new EmitParticlesInstruction(VecHelper.getCenterOf(pos),
-                Emitter.withinBlockSpace(new DustParticleOptions(rgb, 1), Vec3.ZERO), amount, 2));
+            addInstruction(new EmitParticlesInstruction(VecHelper.getCenterOf(pos), Emitter.withinBlockSpace(new DustParticleOptions(rgb, 1), Vec3.ZERO), amount, 2));
         }
 
     }
@@ -306,13 +300,11 @@ public class SceneBuilder {
         }
 
         public void changeBirbPose(ElementLink<ParrotElement> birb, Supplier<? extends ParrotPose> pose) {
-            addInstruction(scene -> scene.resolve(birb)
-                .setPose(pose.get()));
+            addInstruction(scene -> scene.resolve(birb).setPose(pose.get()));
         }
 
         public void conductorBirb(ElementLink<ParrotElement> birb, boolean conductor) {
-            addInstruction(scene -> scene.resolve(birb)
-                .setConductor(conductor));
+            addInstruction(scene -> scene.resolve(birb).setConductor(conductor));
         }
 
         public void movePointOfInterest(Vec3 location) {
@@ -323,8 +315,7 @@ public class SceneBuilder {
             movePointOfInterest(VecHelper.getCenterOf(location));
         }
 
-        public void rotateParrot(ElementLink<ParrotElement> link, double xRotation, double yRotation, double zRotation,
-                                 int duration) {
+        public void rotateParrot(ElementLink<ParrotElement> link, double xRotation, double yRotation, double zRotation, int duration) {
             addInstruction(AnimateParrotInstruction.rotate(link, new Vec3(xRotation, yRotation, zRotation), duration));
         }
 
@@ -351,34 +342,30 @@ public class SceneBuilder {
         public <T extends AnimatedSceneElement> void hideElement(ElementLink<T> link, Direction direction) {
             addInstruction(new FadeOutOfSceneInstruction<>(15, direction, link));
         }
-
     }
 
     public class WorldInstructions {
-
         public void incrementBlockBreakingProgress(BlockPos pos) {
             addInstruction(scene -> {
                 PonderWorld world = scene.getWorld();
-                int progress = world.getBlockBreakingProgressions()
-                    .getOrDefault(pos, -1) + 1;
+                int progress = world.getBlockBreakingProgressions().getOrDefault(pos, -1) + 1;
                 if (progress == 9) {
                     world.addBlockDestroyEffects(pos, world.getBlockState(pos));
                     world.destroyBlock(pos, false);
                     world.setBlockBreakingProgress(pos, 0);
                     scene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
-                } else
+                } else {
                     world.setBlockBreakingProgress(pos, progress + 1);
+                }
             });
         }
 
         public void showSection(Selection selection, Direction fadeInDirection) {
-            addInstruction(new DisplayWorldSectionInstruction(15, fadeInDirection, selection,
-                Optional.of(scene::getBaseWorldSection)));
+            addInstruction(new DisplayWorldSectionInstruction(15, fadeInDirection, selection, Optional.of(scene::getBaseWorldSection)));
         }
 
         public void showSectionAndMerge(Selection selection, Direction fadeInDirection, ElementLink<WorldSectionElement> link) {
-            addInstruction(new DisplayWorldSectionInstruction(15, fadeInDirection, selection,
-                Optional.of(() -> scene.resolve(link))));
+            addInstruction(new DisplayWorldSectionInstruction(15, fadeInDirection, selection, Optional.of(() -> scene.resolve(link))));
         }
 
         public ElementLink<WorldSectionElement> showIndependentSection(Selection selection, Direction fadeInDirection) {
@@ -404,8 +391,7 @@ public class SceneBuilder {
             ElementLink<WorldSectionElement> elementLink = new ElementLink<>(WorldSectionElement.class);
 
             addInstruction(scene -> {
-                scene.getBaseWorldSection()
-                    .erase(selection);
+                scene.getBaseWorldSection().erase(selection);
                 scene.linkElement(worldSectionElement, elementLink);
                 scene.addElement(worldSectionElement);
                 worldSectionElement.queueRedraw();
@@ -418,8 +404,7 @@ public class SceneBuilder {
             addInstruction(new FadeOutOfSceneInstruction<>(15, fadeOutDirection, link));
         }
 
-        public void hideIndependentSection(ElementLink<WorldSectionElement> link, Direction fadeOutDirection,
-                                           int fadeOutDuration) {
+        public void hideIndependentSection(ElementLink<WorldSectionElement> link, Direction fadeOutDirection, int fadeOutDuration) {
             addInstruction(new FadeOutOfSceneInstruction<>(fadeOutDuration, fadeOutDirection, link));
         }
 
@@ -429,8 +414,7 @@ public class SceneBuilder {
 
 
         public void restoreBlocks(Selection selection) {
-            addInstruction(scene -> scene.getWorld()
-                .restoreBlocks(selection));
+            addInstruction(scene -> scene.getWorld().restoreBlocks(selection));
         }
 
         public ElementLink<WorldSectionElement> makeSectionIndependent(Selection selection) {
@@ -438,8 +422,7 @@ public class SceneBuilder {
             ElementLink<WorldSectionElement> elementLink = new ElementLink<>(WorldSectionElement.class);
 
             addInstruction(scene -> {
-                scene.getBaseWorldSection()
-                    .erase(selection);
+                scene.getBaseWorldSection().erase(selection);
                 scene.linkElement(worldSectionElement, elementLink);
                 scene.addElement(worldSectionElement);
                 worldSectionElement.queueRedraw();
@@ -451,20 +434,16 @@ public class SceneBuilder {
             return elementLink;
         }
 
-        public void rotateSection(ElementLink<WorldSectionElement> link, double xRotation, double yRotation,
-                                  double zRotation, int duration) {
-            addInstruction(
-                AnimateWorldSectionInstruction.rotate(link, new Vec3(xRotation, yRotation, zRotation), duration));
+        public void rotateSection(ElementLink<WorldSectionElement> link, double xRotation, double yRotation, double zRotation, int duration) {
+            addInstruction(AnimateWorldSectionInstruction.rotate(link, new Vec3(xRotation, yRotation, zRotation), duration));
         }
 
         public void configureCenterOfRotation(ElementLink<WorldSectionElement> link, Vec3 anchor) {
-            addInstruction(scene -> scene.resolve(link)
-                .setCenterOfRotation(anchor));
+            addInstruction(scene -> scene.resolve(link).setCenterOfRotation(anchor));
         }
 
         public void configureStabilization(ElementLink<WorldSectionElement> link, Vec3 anchor) {
-            addInstruction(scene -> scene.resolve(link)
-                .stabilizeRotation(anchor));
+            addInstruction(scene -> scene.resolve(link).stabilizeRotation(anchor));
         }
 
         public void moveSection(ElementLink<WorldSectionElement> link, Vec3 offset, int duration) {
@@ -492,8 +471,7 @@ public class SceneBuilder {
         }
 
         public void cycleBlockProperty(BlockPos pos, Property<?> property) {
-            modifyBlocks(scene.getSceneBuildingUtil().select.position(pos),
-                s -> s.hasProperty(property) ? s.cycle(property) : s, false);
+            modifyBlocks(scene.getSceneBuildingUtil().select.position(pos), s -> s.hasProperty(property) ? s.cycle(property) : s, false);
         }
 
         public void modifyBlocks(Selection selection, UnaryOperator<BlockState> stateFunc, boolean spawnParticles) {
@@ -502,12 +480,15 @@ public class SceneBuilder {
 
         public void toggleRedstonePower(Selection selection) {
             modifyBlocks(selection, s -> {
-                if (s.hasProperty(BlockStateProperties.POWER))
+                if (s.hasProperty(BlockStateProperties.POWER)) {
                     s = s.setValue(BlockStateProperties.POWER, s.getValue(BlockStateProperties.POWER) == 0 ? 15 : 0);
-                if (s.hasProperty(BlockStateProperties.POWERED))
+                }
+                if (s.hasProperty(BlockStateProperties.POWERED)) {
                     s = s.cycle(BlockStateProperties.POWERED);
-                if (s.hasProperty(RedstoneTorchBlock.LIT))
+                }
+                if (s.hasProperty(RedstoneTorchBlock.LIT)) {
                     s = s.cycle(RedstoneTorchBlock.LIT);
+                }
                 return s;
             }, false);
         }
@@ -516,19 +497,20 @@ public class SceneBuilder {
             addInstruction(scene -> scene.forEachWorldEntity(entityClass, entityCallBack));
         }
 
-        public <T extends Entity> void modifyEntitiesInside(Class<T> entityClass, Selection area,
-                                                            Consumer<T> entityCallBack) {
+        public <T extends Entity> void modifyEntitiesInside(Class<T> entityClass, Selection area, Consumer<T> entityCallBack) {
             addInstruction(scene -> scene.forEachWorldEntity(entityClass, e -> {
-                if (area.test(e.blockPosition()))
+                if (area.test(e.blockPosition())) {
                     entityCallBack.accept(e);
+                }
             }));
         }
 
         public void modifyEntity(ElementLink<EntityElement> link, Consumer<Entity> entityCallBack) {
             addInstruction(scene -> {
                 EntityElement resolve = scene.resolve(link);
-                if (resolve != null)
-                    resolve.ifPresent(entityCallBack::accept);
+                if (resolve != null) {
+                    resolve.ifPresent(entityCallBack);
+                }
             });
         }
 
@@ -553,13 +535,11 @@ public class SceneBuilder {
             });
         }
 
-        public void modifyBlockEntityNBT(Selection selection, Class<? extends BlockEntity> beType,
-                                         Consumer<CompoundTag> consumer) {
+        public void modifyBlockEntityNBT(Selection selection, Class<? extends BlockEntity> beType, Consumer<CompoundTag> consumer) {
             modifyBlockEntityNBT(selection, beType, consumer, false);
         }
 
-        public <T extends BlockEntity> void modifyBlockEntity(BlockPos position, Class<T> beType,
-                                                              Consumer<T> consumer) {
+        public <T extends BlockEntity> void modifyBlockEntity(BlockPos position, Class<T> beType, Consumer<T> consumer) {
             addInstruction(scene -> {
                 BlockEntity blockEntity = scene.getWorld()
                     .getBlockEntity(position);
@@ -568,21 +548,17 @@ public class SceneBuilder {
             });
         }
 
-        public void modifyBlockEntityNBT(Selection selection, Class<? extends BlockEntity> teType,
-                                         Consumer<CompoundTag> consumer, boolean reDrawBlocks) {
+        public void modifyBlockEntityNBT(Selection selection, Class<? extends BlockEntity> teType, Consumer<CompoundTag> consumer, boolean reDrawBlocks) {
             addInstruction(new BlockEntityDataInstruction(selection, teType, nbt -> {
                 consumer.accept(nbt);
                 return nbt;
             }, reDrawBlocks));
         }
-
     }
 
     public class DebugInstructions {
-
         public void debugSchematic() {
-            addInstruction(
-                scene -> scene.addElement(new WorldSectionElement(scene.getSceneBuildingUtil().select.everywhere())));
+            addInstruction(scene -> scene.addElement(new WorldSectionElement(scene.getSceneBuildingUtil().select.everywhere())));
         }
 
         public void addInstructionInstance(PonderInstruction instruction) {
@@ -592,7 +568,5 @@ public class SceneBuilder {
         public void enqueueCallback(Consumer<PonderScene> callback) {
             addInstruction(callback);
         }
-
     }
-
 }

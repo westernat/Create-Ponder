@@ -25,8 +25,8 @@ import java.util.Map;
  */
 public class BlockEntityBehaviourEvent<T extends SmartBlockEntity> extends GenericEvent<T> {
 
-	private T smartBlockEntity;
-	private Map<BehaviourType<?>, BlockEntityBehaviour> behaviours;
+	private final T smartBlockEntity;
+	private final Map<BehaviourType<?>, BlockEntityBehaviour> behaviours;
 
 	public BlockEntityBehaviourEvent(T blockEntity, Map<BehaviourType<?>, BlockEntityBehaviour> behaviours) {
 		smartBlockEntity = blockEntity;

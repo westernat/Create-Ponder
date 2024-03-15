@@ -7,8 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public class PonderChapter implements ScreenElement {
-
     private final ResourceLocation id;
     private final ResourceLocation icon;
 
@@ -26,8 +26,9 @@ public class PonderChapter implements ScreenElement {
     }
 
     public PonderChapter addTagsToChapter(PonderTag... tags) {
-        for (PonderTag t : tags)
+        for (PonderTag t : tags) {
             PonderRegistry.TAGS.add(t, this);
+        }
         return this;
     }
 

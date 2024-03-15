@@ -24,7 +24,6 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 public class PonderRegistry {
-
     public static final PonderTagRegistry TAGS = new PonderTagRegistry();
     public static final PonderChapterRegistry CHAPTERS = new PonderChapterRegistry();
     // Map from item IDs to storyboard entries
@@ -80,8 +79,7 @@ public class PonderRegistry {
     public static PonderScene compileScene(int i, PonderStoryBoardEntry sb, PonderWorld world) {
         PonderScene scene = new PonderScene(world, sb.getNamespace(), sb.getComponent(), sb.getTags());
         SceneBuilder builder = scene.builder();
-        sb.getBoard()
-            .program(builder, scene.getSceneBuildingUtil());
+        sb.getBoard().program(builder, scene.getSceneBuildingUtil());
         return scene;
     }
 
@@ -110,11 +108,9 @@ public class PonderRegistry {
 
     public static StructureTemplate loadSchematic(InputStream resourceStream) throws IOException {
         StructureTemplate t = new StructureTemplate();
-        DataInputStream stream =
-            new DataInputStream(new BufferedInputStream(new GZIPInputStream(resourceStream)));
+        DataInputStream stream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(resourceStream)));
         CompoundTag nbt = NbtIo.read(stream, new NbtAccounter(0x20000000L));
         t.load(Minecraft.getInstance().level.holderLookup(Registries.BLOCK), nbt);
         return t;
     }
-
 }

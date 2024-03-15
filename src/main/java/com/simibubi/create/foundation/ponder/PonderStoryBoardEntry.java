@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class PonderStoryBoardEntry {
-
     private final PonderStoryBoard board;
     private final String namespace;
     private final ResourceLocation schematicLocation;
@@ -69,8 +69,9 @@ public class PonderStoryBoardEntry {
     }
 
     public PonderStoryBoardEntry chapters(PonderChapter... chapters) {
-        for (PonderChapter c : chapters)
+        for (PonderChapter c : chapters) {
             chapter(c);
+        }
         return this;
     }
 
@@ -80,5 +81,4 @@ public class PonderStoryBoardEntry {
     public interface PonderStoryBoard {
         void program(SceneBuilder scene, SceneBuildingUtil util);
     }
-
 }
