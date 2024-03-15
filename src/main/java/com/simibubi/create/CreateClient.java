@@ -20,7 +20,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class CreateClient {
-
     public static final SuperByteBufferCache BUFFER_CACHE = new SuperByteBufferCache();
     public static final Outliner OUTLINER = new Outliner();
 
@@ -38,7 +37,6 @@ public class CreateClient {
 
         AllPonderTags.register();
         PonderIndex.register();
-
         UIRenderHelper.init();
     }
 
@@ -62,5 +60,4 @@ public class CreateClient {
 
         mc.player.displayClientMessage(text, false);
     }
-
 }

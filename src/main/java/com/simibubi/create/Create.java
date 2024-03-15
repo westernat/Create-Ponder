@@ -24,6 +24,7 @@ public class Create {
     public static final String VERSION = "0.0.1b";
     public static final Logger LOGGER = LogUtils.getLogger();
 
+
     /**
      * Use the {@link Random} of a local {@link Level} or {@link Entity} or create one
      */
