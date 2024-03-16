@@ -1,4 +1,4 @@
-<p align="center"><img src="https://i.imgur.com/SXaePW6.png" alt="Logo" width="200"></p>
+<p align="center"><img src="https://imgur.com/a/QqEfgZV" alt="Logo" width="200"></p>
 
 # Create Ponder
 
