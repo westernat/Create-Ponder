@@ -2,6 +2,6 @@
 
 # Create Ponder
 
-The function of Ponder split from Create
+The Ponder function split from Create
 
 So that the modpacker could directly use the Ponder function instead of using a full Create
