@@ -1,7 +1,6 @@
 package com.simibubi.create.infrastructure.gui;
 
 import com.jozufozu.flywheel.util.transform.TransformStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.Create;
@@ -25,18 +24,11 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.renderer.CubeMap;
-import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
 
 public class CreateMainMenuScreen extends AbstractSimiScreen {
-    public static final CubeMap PANORAMA_RESOURCES = new CubeMap(Create.asResource("textures/gui/title/background/panorama"));
-    public static final ResourceLocation PANORAMA_OVERLAY_TEXTURES = new ResourceLocation("textures/gui/title/background/panorama_overlay.png");
-    public static final PanoramaRenderer PANORAMA = new PanoramaRenderer(PANORAMA_RESOURCES);
-
     private static final Component CURSEFORGE_TOOLTIP = Components.literal("CurseForge").withStyle(s -> s.withColor(0xFC785C).withBold(true));
     private static final Component MODRINTH_TOOLTIP = Components.literal("Modrinth").withStyle(s -> s.withColor(0x3FD32B).withBold(true));
 
@@ -48,18 +40,12 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
     protected final Screen parent;
     protected boolean returnOnClose;
 
-    private final PanoramaRenderer vanillaPanorama;
     private long firstRenderTime;
     private Button gettingStarted;
 
     public CreateMainMenuScreen(Screen parent) {
         this.parent = parent;
         returnOnClose = true;
-        if (parent instanceof TitleScreen titleScreen) {
-            vanillaPanorama = titleScreen.panorama;
-        } else {
-            vanillaPanorama = new PanoramaRenderer(TitleScreen.CUBE_MAP);
-        }
     }
 
     @Override
@@ -74,21 +60,7 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
     protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         float f = (float) (Util.getMillis() - this.firstRenderTime) / 1000.0F;
         float alpha = Mth.clamp(f, 0.0F, 1.0F);
-        float elapsedPartials = minecraft.getDeltaFrameTime();
-
-        if (parent instanceof TitleScreen) {
-            if (alpha < 1) {
-                vanillaPanorama.render(elapsedPartials, 1);
-            }
-            PANORAMA.render(elapsedPartials, alpha);
-
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            graphics.blit(PANORAMA_OVERLAY_TEXTURES, 0, 0, this.width, this.height, 0.0F, 0.0F, 16, 128, 16, 128);
-        }
-
         RenderSystem.enableDepthTest();
-
         PoseStack ms = graphics.pose();
 
         for (int side : Iterate.positiveAndNegative) {
@@ -124,7 +96,6 @@ public class CreateMainMenuScreen extends AbstractSimiScreen {
         ms.translate(0, 0, 200);
         graphics.drawCenteredString(font, Components.literal(Create.NAME).withStyle(ChatFormatting.BOLD).append(Components.literal(" v" + Create.VERSION).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE)), width / 2, 89, 0xFF_E4BB67);
         ms.popPose();
-
         RenderSystem.disableDepthTest();
     }
 

@@ -21,9 +21,8 @@ import java.util.Random;
 public class Create {
     public static final String ID = "create";
     public static final String NAME = "Create Ponder";
-    public static final String VERSION = "0.0.1b";
+    public static final String VERSION = "0.0.1c";
     public static final Logger LOGGER = LogUtils.getLogger();
-
 
     /**
      * Use the {@link Random} of a local {@link Level} or {@link Entity} or create one
@@ -38,7 +37,6 @@ public class Create {
     public static void onCtor() {
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        AllStructureProcessorTypes.register(modEventBus);
         AllPackets.registerPackets();
         AllConfigs.register(modLoadingContext);
         modEventBus.addListener(Create::init);

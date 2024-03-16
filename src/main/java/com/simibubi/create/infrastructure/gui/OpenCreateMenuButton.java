@@ -33,7 +33,8 @@ public class OpenCreateMenuButton extends Button {
     }
 
     @Override
-    public void renderString(GuiGraphics graphics, @NotNull Font pFont, int pColor) {
+    public void renderString(@NotNull GuiGraphics graphics, @NotNull Font pFont, int pColor) {
+        //AllGuiTextures.LOGO.render(graphics, getX() + 2, getY() + 2);
         graphics.renderItem(ICON, getX() + 2, getY() + 2);
     }
 

@@ -3,7 +3,6 @@ package com.simibubi.create.infrastructure.config;
 import com.simibubi.create.foundation.config.ConfigBase;
 
 public class CClient extends ConfigBase {
-
     public final ConfigGroup client = group(0, "client", Comments.client);
 
     public final ConfigInt ingameMenuConfigButtonRow = i(3, 0, 5, "ingameMenuConfigButtonRow", Comments.ingameMenuConfigButtonRow);

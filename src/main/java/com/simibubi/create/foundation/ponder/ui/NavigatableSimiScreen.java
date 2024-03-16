@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
-
     public static final String THINK_BACK = PonderLocalization.LANG_PREFIX + "think_back";
 
     protected int depthPointX, depthPointY;

@@ -17,13 +17,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
+@SuppressWarnings("unused")
 public class AllIcons implements ScreenElement {
     public static final ResourceLocation ICON_ATLAS = Create.asResource("textures/gui/icons.png");
     public static final int ICON_ATLAS_SIZE = 256;
 
     private static int x = 0, y = -1;
-    private int iconX;
-    private int iconY;
+    private final int iconX;
+    private final int iconY;
 
     public static final AllIcons
         I_ADD = newRow(),
@@ -133,7 +134,7 @@ public class AllIcons implements ScreenElement {
         VALUE_BOX_HOVER_6PX = next(),
         VALUE_BOX_HOVER_4PX = next(),
         VALUE_BOX_HOVER_8PX = next(),
-
+    // todo only ponder
     I_MTD_LEFT = newRow(),
         I_MTD_CLOSE = next(),
         I_MTD_RIGHT = next(),
@@ -159,7 +160,6 @@ public class AllIcons implements ScreenElement {
         I_FX_FIELD_ON = next(),
         I_FX_BLEND = next(),
         I_FX_BLEND_OFF = next();
-    ;
 
     public AllIcons(int x, int y) {
         iconX = x * 16;

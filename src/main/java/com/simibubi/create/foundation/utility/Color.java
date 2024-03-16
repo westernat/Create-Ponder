@@ -27,7 +27,7 @@ public class Color {
         value = ((a & 0xff) << 24) |
             ((r & 0xff) << 16) |
             ((g & 0xff) << 8) |
-            ((b & 0xff) << 0);
+            (b & 0xff);
     }
 
     public Color(float r, float g, float b, float a) {
@@ -92,7 +92,7 @@ public class Color {
      * @see #getRGB
      */
     public int getBlue() {
-        return (getRGB() >> 0) & 0xff;
+        return getRGB() & 0xff;
     }
 
     /**
@@ -209,8 +209,7 @@ public class Color {
 
     public Color modifyValue(UnaryOperator<Integer> function) {
         int newValue = function.apply(value);
-        if (newValue == value)
-            return this;
+        if (newValue == value) return this;
 
         return ensureMutable().setValueUnchecked(newValue);
     }
@@ -218,8 +217,7 @@ public class Color {
     // ********* //
 
     protected Color ensureMutable() {
-        if (this.mutable)
-            return this;
+        if (this.mutable) return this;
 
         return new Color(this.value);
     }
@@ -235,7 +233,7 @@ public class Color {
     }
 
     protected Color setBlueUnchecked(int b) {
-        this.value = (this.value & 0xff_ffff00) | ((b & 0xff) << 0);
+        this.value = (this.value & 0xff_ffff00) | (b & 0xff);
         return this;
     }
 
@@ -274,11 +272,10 @@ public class Color {
         int g2 = (color2 >> 8) & 0xFF;
         int b2 = color2 & 0xFF;
 
-        return
-            ((int) (a1 + (a2 - a1) * w) << 24) +
-                ((int) (r1 + (r2 - r1) * w) << 16) +
-                ((int) (g1 + (g2 - g1) * w) << 8) +
-                ((int) (b1 + (b2 - b1) * w) << 0);
+        return ((int) (a1 + (a2 - a1) * w) << 24) +
+            ((int) (r1 + (r2 - r1) * w) << 16) +
+            ((int) (g1 + (g2 - g1) * w) << 8) +
+            (int) (b1 + (b2 - b1) * w);
     }
 
     public static Color rainbowColor(int timeStep) {
@@ -293,19 +290,13 @@ public class Color {
 
     private static int colorInPhase(int phase, int progress) {
         phase = phase % 6;
-        if (phase <= 1)
-            return 0;
-        if (phase == 2)
-            return progress;
-        if (phase <= 4)
-            return 255;
-        else
-            return 255 - progress;
+        if (phase <= 1) return 0;
+        if (phase == 2) return progress;
+        if (phase <= 4) return 255;
+        else return 255 - progress;
     }
 
     public static Color generateFromLong(long l) {
-        return rainbowColor(Hashing.crc32().hashLong(l).asInt())
-            .mixWith(WHITE, 0.5f);
+        return rainbowColor(Hashing.crc32().hashLong(l).asInt()).mixWith(WHITE, 0.5f);
     }
-
 }

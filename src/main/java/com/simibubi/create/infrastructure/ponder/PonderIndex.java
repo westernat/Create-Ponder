@@ -16,5 +16,4 @@ public class PonderIndex {
     public static boolean editingModeActive() {
         return AllConfigs.client().editingMode.get();
     }
-
 }

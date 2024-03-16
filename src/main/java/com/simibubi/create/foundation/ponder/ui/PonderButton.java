@@ -18,7 +18,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 public class PonderButton extends BoxWidget {
-
     protected ItemStack item;
     protected PonderTag tag;
     protected KeyMapping shortcut;
@@ -91,17 +90,15 @@ public class PonderButton extends BoxWidget {
         super.doRender(graphics, mouseX, mouseY, partialTicks);
         float fadeValue = fade.getValue();
 
-        if (fadeValue < .1f)
-            return;
+        if (fadeValue < .1f) return;
 
         if (shortcut != null) {
             PoseStack ms = graphics.pose();
             ms.pushPose();
             ms.translate(0, 0, z + 10);
-            graphics.drawCenteredString(Minecraft.getInstance().font, shortcut.getTranslatedKeyMessage(),
-                getX() + width / 2 + 8, getY() + height - 6, Theme.c(Theme.Key.TEXT_DARKER)
-                    .scaleAlpha(fadeValue)
-                    .getRGB());
+            graphics.drawCenteredString(Minecraft.getInstance().font, shortcut.getTranslatedKeyMessage(), getX() + width / 2 + 8, getY() + height - 6, Theme.c(Theme.Key.TEXT_DARKER)
+                .scaleAlpha(fadeValue)
+                .getRGB());
             ms.popPose();
         }
     }
@@ -133,5 +130,4 @@ public class PonderButton extends BoxWidget {
     public Key getClickTheme() {
         return Theme.Key.PONDER_BUTTON_CLICK;
     }
-
 }
