@@ -21,7 +21,7 @@ import java.util.Random;
 public class Create {
     public static final String ID = "create";
     public static final String NAME = "Create Ponder";
-    public static final String VERSION = "0.0.1c";
+    public static final String VERSION = "0.0.1d";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     /**
@@ -35,10 +35,8 @@ public class Create {
     }
 
     public static void onCtor() {
-        ModLoadingContext modLoadingContext = ModLoadingContext.get();
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        AllPackets.registerPackets();
-        AllConfigs.register(modLoadingContext);
+        AllConfigs.register(ModLoadingContext.get());
         modEventBus.addListener(Create::init);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateClient.onCtorClient(modEventBus));
     }

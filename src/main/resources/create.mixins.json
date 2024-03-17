@@ -12,7 +12,6 @@
         "accessor.GameRendererAccessor",
         "accessor.ParticleEngineAccessor",
         "client.BlockDestructionProgressMixin",
-        "client.HeavyBootsOnPlayerMixin",
         "client.LevelRendererMixin",
         "client.WindowResizeMixin"
     ],

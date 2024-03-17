@@ -3,7 +3,6 @@ package com.simibubi.create.foundation.ponder;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.schematics.SchematicWorld;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.mixin.accessor.ParticleEngineAccessor;
 import com.simibubi.create.foundation.ponder.element.WorldSectionElement;
 import com.simibubi.create.foundation.render.SuperRenderTypeBuffer;
@@ -237,14 +236,6 @@ public class PonderWorld extends SchematicWorld {
     public void addParticle(Particle p) {
         if (p != null) {
             particles.addParticle(p);
-        }
-    }
-
-    @Override
-    protected void onBEadded(BlockEntity blockEntity, BlockPos pos) {
-        super.onBEadded(blockEntity, pos);
-        if (blockEntity instanceof SmartBlockEntity smartBlockEntity) {
-            smartBlockEntity.markVirtual();
         }
     }
 
