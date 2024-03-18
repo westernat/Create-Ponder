@@ -1,5 +1,6 @@
 package com.simibubi.create;
 
+import com.almostreliable.ponderjs.PonderJSMod;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.foundation.utility.AttachedRegistry;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -19,9 +20,9 @@ import java.util.Random;
 
 @Mod(Create.ID)
 public class Create {
-    public static final String ID = "create";
+    public static final String ID = "createponder";
     public static final String NAME = "Create Ponder";
-    public static final String VERSION = "0.0.1d";
+    public static final String VERSION = "0.0.1e";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     /**
@@ -30,12 +31,15 @@ public class Create {
     @Deprecated
     public static final Random RANDOM = new Random();
 
+    public static PonderJSMod PONDER_JS;
+
     public Create() {
-        onCtor();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        onCtor(modEventBus);
+        PONDER_JS = new PonderJSMod(modEventBus);
     }
 
-    public static void onCtor() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public static void onCtor(IEventBus modEventBus) {
         AllConfigs.register(ModLoadingContext.get());
         modEventBus.addListener(Create::init);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateClient.onCtorClient(modEventBus));

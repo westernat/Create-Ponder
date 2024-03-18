@@ -50,7 +50,7 @@ public class SceneBuilder {
      * Instructions for manipulating the schematic and its currently visible areas.
      * Allows to show, hide and modify blocks as the scene plays out.
      */
-    public final WorldInstructions world;
+    public WorldInstructions world;
 
     /**
      * Additional tools for debugging ponder and bypassing the facade
@@ -65,7 +65,7 @@ public class SceneBuilder {
     /**
      * Random other instructions that might come in handy
      */
-    public final SpecialInstructions special;
+    public SpecialInstructions special;
 
     private final PonderScene scene;
 
@@ -222,6 +222,10 @@ public class SceneBuilder {
      */
     public void addLazyKeyframe() {
         addInstruction(KeyframeInstruction.DELAYED);
+    }
+
+    public PonderScene ponderjs$getPonderScene() {
+        return scene;
     }
 
     public class EffectInstructions {

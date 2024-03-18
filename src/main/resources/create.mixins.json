@@ -6,9 +6,11 @@
     "compatibilityLevel": "JAVA_17",
     "refmap": "create.refmap.json",
     "mixins": [
+        "KubeJSClientMixin",
         "accessor.EntityAccessor"
     ],
     "client": [
+        "ParticleAccessor",
         "accessor.GameRendererAccessor",
         "accessor.ParticleEngineAccessor",
         "client.BlockDestructionProgressMixin",

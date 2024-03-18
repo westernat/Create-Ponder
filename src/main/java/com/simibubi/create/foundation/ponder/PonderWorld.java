@@ -228,6 +228,10 @@ public class PonderWorld extends SchematicWorld {
             : particleProvider.createParticle(data, asClientWorld.get(), x, y, z, mx, my, mz);
     }
 
+    public <T extends ParticleOptions> Particle ponderjs$makeParticle(T data, double x, double y, double z, double mx, double my, double mz) {
+        return makeParticle(data, x, y, z, mx, my, mz);
+    }
+
     @Override
     public boolean setBlock(@NotNull BlockPos pos, @NotNull BlockState arg1, int arg2) {
         return super.setBlock(pos, arg1, arg2);

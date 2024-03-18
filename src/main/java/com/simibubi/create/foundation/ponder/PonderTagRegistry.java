@@ -31,6 +31,10 @@ public class PonderTagRegistry {
         return ImmutableSet.copyOf(chapterTags.get(chapter));
     }
 
+    public Multimap<ResourceLocation, PonderTag> getTags() {
+        return tags;
+    }
+
     public Set<ResourceLocation> getItems(PonderTag tag) {
         return tags.entries()
             .stream()

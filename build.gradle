@@ -54,6 +54,10 @@ minecraft {
             arg '-mixin.config=create.mixins.json'
             //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
             property 'forge.logging.console.level', 'info'
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             mods {
                 create {
                     source sourceSets.main
@@ -71,6 +75,10 @@ minecraft {
             workingDirectory project.file('run/server')
             arg '-mixin.config=create.mixins.json'
             property 'forge.logging.console.level', 'info'
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             mods {
                 create {
                     source sourceSets.main
@@ -90,6 +98,13 @@ repositories {
     mavenLocal()
     flatDir {
         dirs 'libs'
+    }
+
+    maven {
+        url = "https://maven.architectury.dev"
+    }
+    maven {
+        url "https://maven.saps.dev/minecraft"
     }
 }
 
@@ -114,6 +129,10 @@ dependencies {
     if (!Boolean.getBoolean('idea.sync.active')) {
         annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
     }
+
+    implementation fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}")
+    implementation fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
+    implementation fg.deobf("dev.latvian.mods:rhino-forge:${rhino_version}")
 }
 
 mixin {

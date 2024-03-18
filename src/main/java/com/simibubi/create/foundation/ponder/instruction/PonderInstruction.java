@@ -1,6 +1,9 @@
 package com.simibubi.create.foundation.ponder.instruction;
 
+import com.almostreliable.ponderjs.util.PonderErrorHelper;
 import com.simibubi.create.foundation.ponder.PonderScene;
+import dev.latvian.mods.rhino.RhinoException;
+import net.minecraft.client.Minecraft;
 
 import java.util.function.Consumer;
 
@@ -29,7 +32,16 @@ public abstract class PonderInstruction {
         private Consumer<PonderScene> callback;
 
         public Simple(Consumer<PonderScene> callback) {
-            this.callback = callback;
+            this.callback = ponderScene -> {
+                try {
+                    callback.accept(ponderScene);
+                } catch (RhinoException e) {
+                    PonderErrorHelper.yeet(e);
+                    if (Minecraft.getInstance() != null) {
+                        Minecraft.getInstance().setScreen(null);
+                    }
+                }
+            };
         }
 
         @Override
