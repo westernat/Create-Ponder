@@ -22,7 +22,7 @@ import java.util.Random;
 public class Create {
     public static final String ID = "createponder";
     public static final String NAME = "Create Ponder";
-    public static final String VERSION = "0.0.1e";
+    public static final String VERSION = "0.0.2a";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     /**
