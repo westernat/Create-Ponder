@@ -4,11 +4,13 @@ import com.simibubi.create.Create;
 import com.simibubi.create.foundation.ModFilePackResources;
 import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.WorldAttached;
+import com.simibubi.create.infrastructure.command.AllCommands;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.event.AddPackFindersEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -22,6 +24,11 @@ public class CommonEvents {
     public static void onUnloadWorld(LevelEvent.Unload event) {
         LevelAccessor world = event.getLevel();
         WorldAttached.invalidateWorld(world);
+    }
+
+    @SubscribeEvent
+    public static void registerCommands(RegisterCommandsEvent event) {
+        AllCommands.register(event.getDispatcher());
     }
 
     @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)

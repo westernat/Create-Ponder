@@ -40,6 +40,7 @@ public class Create {
     }
 
     public static void onCtor(IEventBus modEventBus) {
+        AllPackets.registerPackets();
         AllConfigs.register(ModLoadingContext.get());
         modEventBus.addListener(Create::init);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateClient.onCtorClient(modEventBus));
