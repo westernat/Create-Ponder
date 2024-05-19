@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "createponder",
+  "version": "${version}",
+
+  "name": "Create Ponder",
+  "description": "The ponder function split from Create",
+  "authors": [
+    "Fabricators of Create",
+    "Creators of Create",
+    "kotakotik22, AlmostReliable",
+    "Westernat"
+  ],
+  "contact": {
+    "issues": "https://github.com/Fabricators-of-Create/Create/issues",
+    "sources": "https://github.com/Fabricators-of-Create/Create"
+  },
+
+  "license": "MIT",
+  "icon": "logo.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.simibubi.create.Create"
+    ],
+    "client": [
+      "com.simibubi.create.CreateClient",
+      "com.almostreliable.ponderjs.PonderJSMod"
+    ]
+  },
+
+  "mixins": [ "create.mixins.json" ],
+  "accessWidener": "create.accesswidener",
+
+  "depends": {
+    "minecraft": "${minecraft_version}",
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": ">=${fabric_version}",
+
+    "porting_lib_accessors": ">=${port_lib_accessors_version}",
+    "porting_lib_base": ">=${port_lib_base_version}",
+    "porting_lib_entity": ">=${port_lib_entity_version}",
+    "porting_lib_extensions": ">=${port_lib_extensions_version}",
+    "porting_lib_networking": ">=${port_lib_networking_version}",
+    "porting_lib_obj_loader": ">=${port_lib_obj_loader_version}",
+    "porting_lib_tags": ">=${port_lib_tags_version}",
+    "porting_lib_transfer": ">=${port_lib_transfer_version}",
+    "porting_lib_models": ">=${port_lib_models_version}",
+    "porting_lib_client_events": ">=${port_lib_client_events_version}",
+    "porting_lib_config": ">=${port_lib_config_version}",
+
+    "kubejs": ">=2001.6.4-build.114"
+  },
+
+  "breaks": {
+    "optifabric": "*",
+    "colormatic": "<=3.1.1",
+    "iris": "<=1.2.5",
+    "sodium": "<=0.4.10",
+
+    "create": "*"
+  }
+}

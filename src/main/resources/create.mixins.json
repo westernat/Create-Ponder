@@ -1,0 +1,26 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "priority": 1100,
+    "package": "com.simibubi.create.foundation.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "${archivesBaseName}-refmap.json",
+    "mixins": [
+        "accessor.EntityAccessor",
+        "fabric.BlockableEventLoopAccessor",
+        "fabric.RegistryMixin",
+        "fabric.StructureUtilsMixin",
+        "fabric.TagAppenderAccessor"
+    ],
+    "client": [
+        "ParticleAccessor",
+        "accessor.GameRendererAccessor",
+        "accessor.ParticleEngineAccessor",
+        "client.BlockDestructionProgressMixin",
+        "client.LevelRendererMixin",
+        "client.WindowResizeMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+  }
+}

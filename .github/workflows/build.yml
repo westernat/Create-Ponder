@@ -1,0 +1,52 @@
+name: build
+on:
+    workflow_dispatch:
+          inputs:
+              publish:
+                  description: Publish to Modrinth and CurseForge
+                  required: true
+                  default: "false"
+              patch:
+                  description: Patch number, 0 for first (ex. Create 1.19.2 v0.5.0.g Patch N)
+                  required: true
+    pull_request:
+    push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PUBLISH_SUFFIX: snapshots
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+      PATCH_NUMBER: ${{ github.event.inputs.patch }}
+      PUBLISHING: ${{ github.event.inputs.publish }}
+    steps:
+
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: build
+        run: ./gradlew buildOrPublish
+
+      - name: capture build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Artifacts
+          path: build/libs/
+
+      - name: publish to Modrinth and CurseForge
+        if: ${{ github.event.inputs.publish }}
+        run: ./gradlew publishMod

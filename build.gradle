@@ -1,0 +1,189 @@
+//file:noinspection GrMethodMayBeStatic
+plugins {
+    id "fabric-loom" version "1.5.+"
+
+    id "io.github.p03w.machete" version "1.1.4" // automatic jar compressing on build
+
+    id "com.modrinth.minotaur" version "2.+" // modrinth publishing
+    id "com.matthewprenger.cursegradle" version "1.+" // curseforge publishing
+    id "maven-publish" // maven publishing
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+String runNumber = System.getenv("GITHUB_RUN_NUMBER")
+String build = runNumber != null ? "build.$runNumber" : "local"
+version = "$mod_version-$build+mc$minecraft_version"
+
+group = project.maven_group
+archivesBaseName = "create-ponder-fabric"
+
+repositories {
+    maven { url = "https://maven.quiltmc.org/repository/release" } // QM
+    maven { url = "https://maven.parchmentmc.org" } // Parchment
+    maven { url = "https://maven.fabricmc.net/" } // FAPI, Loader
+    maven { url = "https://mvn.devos.one/snapshots/" } // Registrate, Forge Tags, Milk Lib
+    maven { url = "https://mvn.devos.one/releases/" } // Porting Lib
+    maven { // for Porting Lib: Mixin Extras, Fabric ASM
+        url = "https://jitpack.io/"
+        content { includeGroupAndSubgroups("com.github") }
+    }
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // Forge Config API Port
+    maven { url = "https://maven.tterrag.com/" } // Flywheel
+    maven { url = "https://maven.shedaniel.me/" } // REI and deps
+    maven { url = "https://api.modrinth.com/maven" } // LazyDFU, Sodium, Sandwichable
+    maven { url = "https://maven.terraformersmc.com/" } // Mod Menu, Trinkets
+    maven { // Reach Entity Attributes
+        url = "https://maven.jamieswhiteshirt.com/libs-release"
+        content { includeGroup("com.jamieswhiteshirt") }
+    }
+    maven {
+        // Shedaniel's maven (Architectury API)
+        url = "https://maven.architectury.dev"
+        content {
+            includeGroup "dev.architectury"
+        }
+    }
+    maven {
+        // saps.dev Maven (KubeJS and Rhino)
+        url = "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup "dev.latvian.mods"
+        }
+    }
+}
+
+dependencies {
+    setup(dependencies)
+    devEnv(dependencies)
+    dependencies(dependencies)
+    modApi("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
+}
+
+// actual dependencies for Create
+def dependencies(DependencyHandler deps) {
+    deps.modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric_version")
+
+    for (String module in port_lib_modules.split(",")) {
+        deps.modApi(deps.include("io.github.fabricators_of_create.Porting-Lib:$module:$port_lib_version"))
+    }
+
+    deps.modApi(deps.include("com.tterrag.registrate_fabric:Registrate:$registrate_version")) {
+        exclude(group: "io.github.fabricators_of_create") // avoid duplicate Porting Lib
+    }
+
+    deps.modApi(deps.include("com.jozufozu.flywheel:flywheel-fabric-$flywheel_minecraft_version:$flywheel_version"))
+    deps.api(deps.include("com.google.code.findbugs:jsr305:$jsr305_version"))
+}
+
+// initial project setup
+def setup(DependencyHandler deps) {
+    deps.minecraft("com.mojang:minecraft:$minecraft_version")
+    deps.mappings(loom.layered {
+        it.mappings("org.quiltmc:quilt-mappings:$minecraft_version+build.$qm_version:intermediary-v2")
+        it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
+        it.officialMojangMappings { nameSyntheticMembers = false }
+    })
+    deps.modImplementation("net.fabricmc:fabric-loader:$loader_version")
+}
+
+// setup mods that enhance development
+def devEnv(DependencyHandler deps) {
+    deps.modLocalRuntime("com.terraformersmc:modmenu:$modmenu_version")
+    // have deprecated modules present at runtime only
+    deps.modLocalRuntime("net.fabricmc.fabric-api:fabric-api-deprecated:$fabric_version")
+}
+
+machete {
+    enabled = Boolean.getBoolean("PUBLISHING") // only optimize published releases
+}
+
+tasks.register("buildOrPublish") {
+    group = "build"
+    String mavenUser = System.getenv("MAVEN_USER")
+    if (mavenUser != null && !mavenUser.isEmpty()) {
+        dependsOn(tasks.named("publish"))
+        println("prepared for publish")
+    } else {
+        dependsOn(tasks.named("build"))
+        println("prepared for build")
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir("src/generated/resources")
+            exclude("src/generated/resources/.cache")
+        }
+    }
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/create.accesswidener")
+
+    runs {
+        datagen {
+            client()
+
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+            vmArg "-Dfabric-api.datagen.modid=create"
+            vmArg "-Dporting_lib.datagen.existing_resources=${file("src/main/resources")}"
+        }
+
+        server {
+            runDir "run/server"
+        }
+
+        gametestServer {
+            server()
+            name "Headlesss GameTests"
+            vmArg "-Dfabric-api.gametest"
+            vmArg "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml"
+            runDir "run/gametest"
+        }
+    }
+}
+
+processResources {
+    exclude("**/*.bbmodel", "**/*.lnk")
+
+    Map<String, Object> properties = [
+            "version": version,
+            "minecraft_version": minecraft_version,
+            "loader_version": loader_version,
+            "fabric_version": fabric_version
+    ]
+    for (String module in port_lib_modules.split(","))
+        properties.put("port_lib_${module}_version".toString(), port_lib_version)
+    properties.put("port_lib_tags_version", "3.0") // the weird one
+
+    properties.forEach((k, v) -> inputs.property(k, v))
+
+    filesMatching("fabric.mod.json") {
+        expand properties
+    }
+
+    filesMatching("create.mixins.json") {
+        expand "archivesBaseName": archivesBaseName
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release.set(17)
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_$archivesBaseName" }
+    }
+}
