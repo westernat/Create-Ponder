@@ -1,8 +1,18 @@
 package com.simibubi.create.foundation.item;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.mutable.MutableInt;
+
 import com.simibubi.create.foundation.utility.Pair;
-import io.github.fabricators_of_create.porting_lib.transfer.TransferUtil;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerHelper;
+
+import com.iafenvoy.ponder.extra.ItemHandlerHelper;
+import com.iafenvoy.ponder.extra.TransferUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
@@ -14,13 +24,6 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.mutable.MutableInt;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class ItemHelper {
 	public static boolean sameItem(ItemStack stack, ItemStack otherStack) {
@@ -107,17 +110,18 @@ public class ItemHelper {
 
 	public static List<Pair<Ingredient, MutableInt>> condenseIngredients(NonNullList<Ingredient> recipeIngredients) {
 		List<Pair<Ingredient, MutableInt>> actualIngredients = new ArrayList<>();
-		Ingredients: for (Ingredient igd : recipeIngredients) {
+		Ingredients:
+		for (Ingredient igd : recipeIngredients) {
 			for (Pair<Ingredient, MutableInt> pair : actualIngredients) {
 				ItemStack[] stacks1 = pair.getFirst()
-					.getItems();
+						.getItems();
 				ItemStack[] stacks2 = igd.getItems();
 				if (stacks1.length != stacks2.length)
 					continue;
 				for (int i = 0; i <= stacks1.length; i++) {
 					if (i == stacks1.length) {
 						pair.getSecond()
-							.increment();
+								.increment();
 						continue Ingredients;
 					}
 					if (!ItemStack.matches(stacks1[i], stacks2[i]))
@@ -168,7 +172,7 @@ public class ItemHelper {
 	}
 
 	public static ItemStack extract(Storage<ItemVariant> inv, Predicate<ItemStack> test, ExtractionCountMode mode, int amount,
-		boolean simulate) {
+									boolean simulate) {
 		int extracted = 0;
 		ItemVariant extracting = null;
 		List<ItemVariant> otherTargets = null;
@@ -237,7 +241,7 @@ public class ItemHelper {
 	}
 
 	public static ItemStack extract(Storage<ItemVariant> inv, Predicate<ItemStack> test,
-		Function<ItemStack, Integer> amountFunction, boolean simulate) {
+									Function<ItemStack, Integer> amountFunction, boolean simulate) {
 		ItemStack extracting = ItemStack.EMPTY;
 		int maxExtractionCount = 64;
 
