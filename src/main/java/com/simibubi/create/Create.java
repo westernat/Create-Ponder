@@ -16,7 +16,7 @@ import java.util.Random;
 public class Create implements ModInitializer {
 	public static final String ID = "createponder";
 	public static final String NAME = "Create Ponder";
-	public static final String VERSION = "0.0.2a";
+	public static final String VERSION = "0.0.2b";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	/** Use the {@link Random} of a local {@link Level} or {@link Entity} or create one */

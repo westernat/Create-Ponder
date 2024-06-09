@@ -1,10 +1,6 @@
 package com.iafenvoy.ponder.extra.network;
 
-import java.util.HashMap;
-import java.util.function.Supplier;
-
 import com.simibubi.create.infrastructure.command.SConfigureConfigPacket;
-
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -12,6 +8,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.HashMap;
+import java.util.function.Supplier;
 
 public class PonderClientNetworkHandler implements ClientPlayNetworking.PlayChannelHandler {
 	public static final ResourceLocation CHANNEL_NAME = new ResourceLocation("create_ponder", "client_handler");
@@ -26,7 +25,7 @@ public class PonderClientNetworkHandler implements ClientPlayNetworking.PlayChan
 	}
 
 	public static void register() {
-		ClientPlayNetworking.registerReceiver(CHANNEL_NAME, INSTANCE);
+		ClientPlayNetworking.registerGlobalReceiver(CHANNEL_NAME, INSTANCE);
 		INSTANCE.registerMessage(SConfigureConfigPacket::new);
 	}
 
