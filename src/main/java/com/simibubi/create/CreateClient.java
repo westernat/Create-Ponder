@@ -1,5 +1,7 @@
 package com.simibubi.create;
 
+import com.iafenvoy.ponder.extra.network.PonderClientNetworkHandler;
+import com.iafenvoy.ponder.extra.network.PonderServerNetworkHandler;
 import com.simibubi.create.foundation.ClientResourceReloadListener;
 import com.simibubi.create.foundation.events.ClientEvents;
 import com.simibubi.create.foundation.gui.UIRenderHelper;
@@ -40,7 +42,8 @@ public class CreateClient implements ClientModInitializer {
 
 		// fabric exclusive
 		ClientEvents.register();
-		AllPackets.getChannel().initClientListener();
+
+		PonderClientNetworkHandler.register();
 	}
 
 	public static void invalidateRenderers() {

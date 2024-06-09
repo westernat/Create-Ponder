@@ -1,15 +1,15 @@
 package com.simibubi.create.foundation.ponder;
 
-import com.google.gson.JsonObject;
-import com.simibubi.create.foundation.utility.Couple;
-import com.simibubi.create.infrastructure.ponder.PonderIndex;
-import com.tterrag.registrate.AbstractRegistrate;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.resources.ResourceLocation;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+
+import com.google.gson.JsonObject;
+import com.simibubi.create.foundation.utility.Couple;
+import com.simibubi.create.infrastructure.ponder.PonderIndex;
+
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.resources.ResourceLocation;
 
 public class PonderLocalization {
 	static final Map<ResourceLocation, String> SHARED = new HashMap<>();
@@ -33,7 +33,7 @@ public class PonderLocalization {
 
 	public static void registerSpecific(ResourceLocation sceneId, String key, String enUS) {
 		SPECIFIC.computeIfAbsent(sceneId, $ -> new HashMap<>())
-			.put(key, enUS);
+				.put(key, enUS);
 	}
 
 	//
@@ -71,14 +71,14 @@ public class PonderLocalization {
 	public static String getTag(ResourceLocation key) {
 		if (PonderIndex.editingModeActive())
 			return TAG.containsKey(key) ? TAG.get(key)
-				.getFirst() : ("unregistered tag entry: " + key);
+					.getFirst() : ("unregistered tag entry: " + key);
 		return I18n.get(langKeyForTag(key));
 	}
 
 	public static String getTagDescription(ResourceLocation key) {
 		if (PonderIndex.editingModeActive())
 			return TAG.containsKey(key) ? TAG.get(key)
-				.getSecond() : ("unregistered tag entry: " + key);
+					.getSecond() : ("unregistered tag entry: " + key);
 		return I18n.get(langKeyForTagDescription(key));
 	}
 
@@ -91,7 +91,7 @@ public class PonderLocalization {
 	public static String getSpecific(ResourceLocation sceneId, String k) {
 		if (PonderIndex.editingModeActive())
 			return SPECIFIC.get(sceneId)
-				.get(k);
+					.get(k);
 		return I18n.get(langKeyForSpecific(sceneId, k));
 	}
 
@@ -132,25 +132,20 @@ public class PonderLocalization {
 		});
 
 		SPECIFIC.entrySet()
-			.stream()
-			.filter(entry -> entry.getKey().getNamespace().equals(namespace))
-			.sorted(Map.Entry.comparingByKey())
-			.forEach(entry -> {
-				entry.getValue()
-					.entrySet()
-					.stream()
-					.sorted(Map.Entry.comparingByKey())
-					.forEach(subEntry -> consumer.accept(
-						langKeyForSpecific(entry.getKey(), subEntry.getKey()), subEntry.getValue()));
-			});
+				.stream()
+				.filter(entry -> entry.getKey().getNamespace().equals(namespace))
+				.sorted(Map.Entry.comparingByKey())
+				.forEach(entry -> {
+					entry.getValue()
+							.entrySet()
+							.stream()
+							.sorted(Map.Entry.comparingByKey())
+							.forEach(subEntry -> consumer.accept(
+									langKeyForSpecific(entry.getKey(), subEntry.getKey()), subEntry.getValue()));
+				});
 	}
 
 	public static void record(String namespace, JsonObject object) {
 		provideLang(namespace, object::addProperty);
-	}
-
-	public static void provideRegistrateLang(AbstractRegistrate<?> registrate) {
-		generateSceneLang();
-		provideLang(registrate.getModid(), registrate::addRawLang);
 	}
 }

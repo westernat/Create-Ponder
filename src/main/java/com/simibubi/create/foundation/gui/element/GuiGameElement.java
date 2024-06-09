@@ -1,5 +1,7 @@
 package com.simibubi.create.foundation.gui.element;
 
+import javax.annotation.Nullable;
+
 import com.jozufozu.flywheel.core.PartialModel;
 import com.jozufozu.flywheel.core.virtual.VirtualEmptyBlockGetter;
 import com.jozufozu.flywheel.fabric.model.DefaultLayerFilteringBakedModel;
@@ -13,10 +15,15 @@ import com.mojang.math.Axis;
 import com.simibubi.create.foundation.gui.ILightingSettings;
 import com.simibubi.create.foundation.gui.UIRenderHelper;
 import com.simibubi.create.foundation.utility.VecHelper;
-import io.github.fabricators_of_create.porting_lib.models.virtual.FixedColorTintingBakedModel;
+
+import com.iafenvoy.ponder.extra.FixedColorTintingBakedModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -33,8 +40,6 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
 
 public class GuiGameElement {
 
@@ -56,8 +61,8 @@ public class GuiGameElement {
 
 	public static GuiRenderBuilder of(Fluid fluid) {
 		return new GuiBlockStateRenderBuilder(fluid.defaultFluidState()
-			.createLegacyBlock()
-			.setValue(LiquidBlock.LEVEL, 0));
+				.createLegacyBlock()
+				.setValue(LiquidBlock.LEVEL, 0));
 	}
 
 	public static abstract class GuiRenderBuilder extends RenderElement {
@@ -84,7 +89,7 @@ public class GuiGameElement {
 
 		public GuiRenderBuilder rotateBlock(double xRot, double yRot, double zRot) {
 			return this.rotate(xRot, yRot, zRot)
-				.withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
+					.withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
 		}
 
 		public GuiRenderBuilder scale(double scale) {
@@ -166,9 +171,9 @@ public class GuiGameElement {
 			Minecraft mc = Minecraft.getInstance();
 			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
 			MultiBufferSource.BufferSource buffer = mc.renderBuffers()
-				.bufferSource();
+					.bufferSource();
 			RenderType renderType = blockState.getBlock() == Blocks.AIR ? Sheets.translucentCullBlockSheet()
-				: ItemBlockRenderTypes.getRenderType(blockState, true);
+					: ItemBlockRenderTypes.getRenderType(blockState, true);
 			VertexConsumer vb = buffer.getBuffer(renderType);
 
 			transformMatrix(matrixStack);
@@ -180,10 +185,10 @@ public class GuiGameElement {
 		}
 
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
-			RenderType renderType, VertexConsumer vb, PoseStack ms) {
+								   RenderType renderType, VertexConsumer vb, PoseStack ms) {
 			int color = Minecraft.getInstance()
-				.getBlockColors()
-				.getColor(blockState, null, null, 0);
+					.getBlockColors()
+					.getColor(blockState, null, null, 0);
 //			Color rgb = new Color(color == -1 ? this.color : color);
 //			blockRenderer.getModelRenderer()
 //				.renderModel(ms.last(), vb, blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat(),
@@ -197,7 +202,7 @@ public class GuiGameElement {
 				model = FixedColorTintingBakedModel.wrap(model, color);
 			}
 			blockRenderer.getModelRenderer()
-				.tesselateBlock(VirtualEmptyBlockGetter.FULL_BRIGHT, model, blockState, BlockPos.ZERO, ms, vb, false, RandomSource.create(), 42L, OverlayTexture.NO_OVERLAY);
+					.tesselateBlock(VirtualEmptyBlockGetter.FULL_BRIGHT, model, blockState, BlockPos.ZERO, ms, vb, false, RandomSource.create(), 42L, OverlayTexture.NO_OVERLAY);
 			buffer.endBatch();
 		}
 
@@ -207,13 +212,13 @@ public class GuiGameElement {
 
 		public GuiBlockStateRenderBuilder(BlockState blockstate) {
 			super(Minecraft.getInstance()
-				.getBlockRenderer()
-				.getBlockModel(blockstate), blockstate);
+					.getBlockRenderer()
+					.getBlockModel(blockstate), blockstate);
 		}
 
 		@Override
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
-			RenderType renderType, VertexConsumer vb, PoseStack ms) {
+								   RenderType renderType, VertexConsumer vb, PoseStack ms) {
 			if (blockState.getBlock() instanceof BaseFireBlock) {
 				Lighting.setupForFlatItems();
 //				blockRenderer.renderSingleBlock(blockState, ms, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);

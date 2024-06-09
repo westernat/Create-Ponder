@@ -74,7 +74,6 @@ def dependencies(DependencyHandler deps) {
     }
 
     deps.modApi(deps.include("com.jozufozu.flywheel:flywheel-fabric-$flywheel_minecraft_version:$flywheel_version"))
-    deps.api(deps.include("com.google.code.findbugs:jsr305:$jsr305_version"))
 }
 
 // initial project setup

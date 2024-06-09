@@ -8,10 +8,12 @@ import com.simibubi.create.foundation.ponder.PonderRegistry;
 import com.simibubi.create.foundation.ponder.ui.PonderIndexScreen;
 import com.simibubi.create.foundation.ponder.ui.PonderUI;
 import com.tterrag.registrate.fabric.EnvExecutor;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+
 import org.slf4j.Logger;
 
 import java.util.function.Consumer;
@@ -20,8 +22,8 @@ import java.util.function.Supplier;
 public class SConfigureConfigPacket extends SimplePacketBase {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
-	private final String option;
-	private final String value;
+	private String option;
+	private String value;
 
 	public SConfigureConfigPacket(String option, String value) {
 		this.option = option;
@@ -31,6 +33,9 @@ public class SConfigureConfigPacket extends SimplePacketBase {
 	public SConfigureConfigPacket(FriendlyByteBuf buffer) {
 		this.option = buffer.readUtf(32767);
 		this.value = buffer.readUtf(32767);
+	}
+
+	public SConfigureConfigPacket() {
 	}
 
 	@Override
@@ -44,12 +49,23 @@ public class SConfigureConfigPacket extends SimplePacketBase {
 		context.enqueueWork(() -> EnvExecutor.runWhenOn(EnvType.CLIENT, () -> () -> {
 			try {
 				Actions.valueOf(option)
-					.performAction(value);
+						.performAction(value);
 			} catch (IllegalArgumentException e) {
 				LOGGER.warn("Received ConfigureConfigPacket with invalid Option: " + option);
 			}
 		}));
 		return true;
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return new ResourceLocation("ponder", "configure");
+	}
+
+	@Override
+	public void decode(FriendlyByteBuf buf) {
+		this.option = buf.readUtf(32767);
+		this.value = buf.readUtf(32767);
 	}
 
 	public enum Actions {
@@ -63,7 +79,7 @@ public class SConfigureConfigPacket extends SimplePacketBase {
 
 		void performAction(String value) {
 			consumer.get()
-				.accept(value);
+					.accept(value);
 		}
 
 		@Environment(EnvType.CLIENT)
