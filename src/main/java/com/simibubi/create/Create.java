@@ -1,5 +1,6 @@
 package com.simibubi.create;
 
+import com.iafenvoy.ponder.extra.network.PonderServerNetworkHandler;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.foundation.events.CommonEvents;
 import com.simibubi.create.foundation.ponder.FabricPonderProcessing;
@@ -25,11 +26,11 @@ public class Create implements ModInitializer {
 	@Override
 	public void onInitialize() { // onCtor
 		AllParticleTypes.register();
-		AllPackets.registerPackets();
 		AllConfigs.register();
 		CommonEvents.register();
-		AllPackets.getChannel().initServerListener();
 		FabricPonderProcessing.init();
+
+		PonderServerNetworkHandler.register();
 	}
 
 	public static ResourceLocation asResource(String path) {

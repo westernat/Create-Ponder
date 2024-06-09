@@ -41,7 +41,6 @@
     "porting_lib_accessors": ">=${port_lib_accessors_version}",
     "porting_lib_base": ">=${port_lib_base_version}",
     "porting_lib_extensions": ">=${port_lib_extensions_version}",
-    "porting_lib_networking": ">=${port_lib_networking_version}",
     "porting_lib_config": ">=${port_lib_config_version}",
 
     "kubejs": ">=2001.6.4-build.114"
